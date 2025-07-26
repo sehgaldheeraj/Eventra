@@ -9,6 +9,8 @@ using Domain.Entities;
 using Infrastructure.Persistence;
 using MediatR;
 using Application.Projects.Commands.CreateProject;
+using Application.Projects.Queries.GetAllProjects;
+using Application.Projects.Queries.GetProjectById;
 
 namespace Eventra.Controllers
 {
@@ -29,14 +31,15 @@ namespace Eventra.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
-            return await _context.Projects.ToListAsync();
+            var projects = await _mediator.Send(new GetAllProjectsQuery());
+            return Ok(projects);
         }
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Project>> GetProject(Guid id)
         {
-            var project = await _context.Projects.FindAsync(id);
+            var project = await _mediator.Send(new GetProjectByIdQuery(id));
 
             if (project == null)
             {
