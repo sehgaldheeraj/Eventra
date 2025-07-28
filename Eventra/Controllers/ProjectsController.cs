@@ -11,6 +11,8 @@ using MediatR;
 using Application.Projects.Commands.CreateProject;
 using Application.Projects.Queries.GetAllProjects;
 using Application.Projects.Queries.GetProjectById;
+using Application.Projects.Commands.UpdateProject;
+using Application.Projects.Commands.DeleteProject;
 
 namespace Eventra.Controllers
 {
@@ -18,12 +20,10 @@ namespace Eventra.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly EventraDBContext _context;
         private readonly IMediator _mediator;
 
-        public ProjectsController(IMediator mediator, EventraDBContext context)
+        public ProjectsController(IMediator mediator)
         {
-            _context = context;
             _mediator = mediator;
         }
 
@@ -37,46 +37,22 @@ namespace Eventra.Controllers
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(Guid id)
+        public async Task<ActionResult<Project?>> GetProject(Guid id)
         {
             var project = await _mediator.Send(new GetProjectByIdQuery(id));
-
-            if (project == null)
-            {
-                return NotFound();
-            }
-
             return project;
         }
 
         // PUT: api/Projects/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(Guid id, Project project)
+        public async Task<IActionResult> PutProject(Guid id,[FromBody] UpdateProjectCommand command)
         {
-            if (id != project.Id)
+            if (id != command.Id)
             {
                 return BadRequest();
             }
-
-            _context.Entry(project).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProjectExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _mediator.Send(command);
             return NoContent();
         }
 
@@ -85,8 +61,6 @@ namespace Eventra.Controllers
         [HttpPost]
         public async Task<ActionResult<Project>> PostProject([FromBody] CreateProjectCommand command)
         {
-            //_context.Projects.Add(project);
-            //await _context.SaveChangesAsync();
             var projectId = await _mediator.Send(command);
 
             return CreatedAtAction(nameof(GetProject), new { id = projectId }, projectId);
@@ -96,21 +70,8 @@ namespace Eventra.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(Guid id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
-
+            await _mediator.Send(new DeleteProjectCommand(id));
             return NoContent();
-        }
-
-        private bool ProjectExists(Guid id)
-        {
-            return _context.Projects.Any(e => e.Id == id);
         }
     }
 }

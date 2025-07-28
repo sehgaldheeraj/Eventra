@@ -12,5 +12,7 @@ namespace Domain.Interfaces
         Task AddAsync(Project project);
         Task<List<Project>> GetAllAsync();
         Task<Project?> GetAsync(Guid id);
+        Task UpdateAsync(Project project);
+        Task DeleteAsync(Project project);
     }
 }

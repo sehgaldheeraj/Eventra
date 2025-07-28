@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MediatR;
 
 namespace Infrastructure.Repositories
 {
@@ -34,6 +35,18 @@ namespace Infrastructure.Repositories
                 throw new NotFoundException(nameof(project), id);
             }
             return project;
+        }
+        public async Task UpdateAsync(Project project)
+        {
+            _context.Projects.Update(project);
+            await _context.SaveChangesAsync();
+            
+        }
+        public async Task DeleteAsync(Project project)
+        {
+           _context.Projects.Remove(project);
+            await _context.SaveChangesAsync();
+            
         }
     }
 }
