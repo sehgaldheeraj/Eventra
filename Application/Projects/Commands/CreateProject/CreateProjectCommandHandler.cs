@@ -12,10 +12,10 @@ namespace Application.Projects.Commands.CreateProject
 {
     public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Guid>
     {
-        private readonly IProjectRepository _repository;
-        public CreateProjectCommandHandler(IProjectRepository repository)
+        private readonly IProjectRepository _projectRepository;
+        public CreateProjectCommandHandler(IProjectRepository projectRepository)
         {
-            _repository = repository;
+            _projectRepository = projectRepository;
         }
         public async Task<Guid> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
@@ -26,7 +26,7 @@ namespace Application.Projects.Commands.CreateProject
                 OwnerId = request.OwnerId,
                 CreatedAt = DateTime.UtcNow
             };
-            await _repository.AddAsync(project);
+            await _projectRepository.AddAsync(project);
             return project.Id;
         }
     }

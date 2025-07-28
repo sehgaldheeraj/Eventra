@@ -14,5 +14,6 @@ namespace Infrastructure.Persistence
         }
 
         public DbSet<Project> Projects { get; set; } = null!;
+        public DbSet<User> Users { get; set; } = null!;
     }
 }

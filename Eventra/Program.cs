@@ -1,11 +1,14 @@
 using Application;
 using Application.Projects.Commands.CreateProject;
+using Application.Users.Commands.RegisterUser;
+using Application.Common.Behaviors;
 using Domain.Interfaces;
 using Eventra.Middlewares;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 namespace Eventra
 {
     public class Program
@@ -26,7 +29,10 @@ namespace Eventra
             {
                 cfg.RegisterServicesFromAssembly(typeof(CreateProjectCommandHandler).Assembly);
             });
+            builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Common.Behaviors.ValidationBehavior<,>));
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -11,14 +11,14 @@ namespace Application.Projects.Commands.DeleteProject
 {
     public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand>
     {
-        private readonly IProjectRepository _repository;
-        public DeleteProjectCommandHandler(IProjectRepository repository) { 
-            _repository = repository;
+        private readonly IProjectRepository _projectRepository;
+        public DeleteProjectCommandHandler(IProjectRepository projectRepository) {
+            _projectRepository = projectRepository;
         }
         public async Task Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
         {
-            var project = await _repository.GetAsync(request.Id) ?? throw new NotFoundException("Project", request.Id);
-            await _repository.DeleteAsync(project);
+            var project = await _projectRepository.GetAsync(request.Id) ?? throw new NotFoundException("Project", request.Id);
+            await _projectRepository.DeleteAsync(project);
 
         }
     }

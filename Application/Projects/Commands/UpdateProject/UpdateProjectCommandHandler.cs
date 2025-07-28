@@ -11,17 +11,17 @@ namespace Application.Projects.Commands.UpdateProject
 {
     public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand>
     {
-        private readonly IProjectRepository _repository;
-        public UpdateProjectCommandHandler(IProjectRepository repository)
+        private readonly IProjectRepository _projectRepository;
+        public UpdateProjectCommandHandler(IProjectRepository projectRepository)
         {
-            _repository = repository;
+            _projectRepository = projectRepository;
         }
         public async Task Handle(UpdateProjectCommand request, CancellationToken cancellation)
         {
-            var project =await _repository.GetAsync(request.Id) ?? throw new NotFoundException("Project", request.Id);
+            var project =await _projectRepository.GetAsync(request.Id) ?? throw new NotFoundException("Project", request.Id);
             project.Name = request.Name;
             project.Description = request.Description;
-            await _repository.UpdateAsync(project);
+            await _projectRepository.UpdateAsync(project);
         }
     }
 }

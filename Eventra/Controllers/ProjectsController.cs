@@ -16,6 +16,7 @@ using Application.Projects.Commands.DeleteProject;
 
 namespace Eventra.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectsController : ControllerBase
