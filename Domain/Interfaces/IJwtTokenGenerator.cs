@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IUserRepository
+    public interface IJwtTokenGenerator
     {
-        public Task<Guid> RegisterUserAsync(User user);
-        public Task<User?> GetUserByEmailAsync(string email);
+        string GenerateToken(User user);
     }
 }

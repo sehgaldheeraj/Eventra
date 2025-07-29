@@ -15,10 +15,10 @@ namespace Application.Users.Commands.RegisterUser
         [MaxLength(30)]
         public required string Name { get; set; }
         [Required]
-        [MaxLength(16)]
+        [MaxLength(30)]
         public required string Password { get; set; }
         [Required]
-        [MaxLength(16)]
+        [MaxLength(30)]
         public required string ConfirmPassword { get; set; }
         [Required]
         public required string Email { get; set; }
