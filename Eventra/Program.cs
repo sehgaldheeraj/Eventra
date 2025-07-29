@@ -29,7 +29,7 @@ namespace Eventra
             {
                 cfg.RegisterServicesFromAssembly(typeof(CreateProjectCommandHandler).Assembly);
             });
-            builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
+            builder.Services.AddValidatorsFromAssembly(typeof(ValidationBehavior<,>).Assembly);
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Common.Behaviors.ValidationBehavior<,>));
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
