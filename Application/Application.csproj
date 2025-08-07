@@ -9,13 +9,13 @@
   <ItemGroup>
     <Compile Remove="Common\NewFolder1\**" />
     <Compile Remove="Common\NewFolder2\**" />
-    <Compile Remove="Common\NewFolder\**" />
+    <Compile Remove="Sprints\Validators\**" />
     <EmbeddedResource Remove="Common\NewFolder1\**" />
     <EmbeddedResource Remove="Common\NewFolder2\**" />
-    <EmbeddedResource Remove="Common\NewFolder\**" />
+    <EmbeddedResource Remove="Sprints\Validators\**" />
     <None Remove="Common\NewFolder1\**" />
     <None Remove="Common\NewFolder2\**" />
-    <None Remove="Common\NewFolder\**" />
+    <None Remove="Sprints\Validators\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,10 +27,6 @@
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Users\Queries\" />
   </ItemGroup>
 
 </Project>

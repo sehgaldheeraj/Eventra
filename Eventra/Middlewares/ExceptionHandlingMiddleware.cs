@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Application.Common.Responses;
+using System.Text.Json;
 namespace Eventra.Middlewares
 {
     public class ExceptionHandlingMiddleware
@@ -23,14 +24,9 @@ namespace Eventra.Middlewares
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-                var errorResponse = new
-                {
-                    message = ex.Message,
-                    details = ex.InnerException?.Message,
-                    statusCode = context.Response.StatusCode
-                };
+                var response = ApiResponse<object>.FailResponse("An unexpected error occurred.", new List<string> { ex.Message });
 
-                var json = JsonSerializer.Serialize(errorResponse);
+                var json = JsonSerializer.Serialize(response);
                 await context.Response.WriteAsync(json);
             }
         }    

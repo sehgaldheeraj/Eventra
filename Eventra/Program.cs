@@ -1,7 +1,7 @@
 using Application;
 using Application.Common.Behaviors;
 using Application.Projects.Commands.CreateProject;
-using Application.Users.Validators;
+//using Application.Users.Validators;
 using Domain.Interfaces;
 using Eventra.Middlewares;
 using FluentValidation;
@@ -31,10 +31,11 @@ namespace Eventra
                 cfg.RegisterServicesFromAssembly(typeof(CreateProjectCommandHandler).Assembly);
             });
             builder.Services.AddValidatorsFromAssembly(typeof(ValidationBehavior<,>).Assembly);
-            builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+            //builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Common.Behaviors.ValidationBehavior<,>));
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ISprintRepository, SprintRepository>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
