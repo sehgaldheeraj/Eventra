@@ -1,5 +1,6 @@
 ﻿using Application.Common.Responses;
 using Application.Sprints.Commands.CreateSprint;
+using Application.Sprints.Commands.UpdateSprint;
 using Domain.Entities;
 using Infrastructure.Persistence;
 using MediatR;
@@ -37,7 +38,7 @@ namespace Eventra.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Sprint>> GetSprint(Guid id)
         {
-            var sprint = await _context.Sprints.FindAsync(id);
+            var sprint = await _context.Sprints.Include(s => s.Project).FirstOrDefaultAsync(u => u.Id == id);
 
             if (sprint == null)
             {
@@ -49,32 +50,13 @@ namespace Eventra.Controllers
 
         // PUT: api/Sprints/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSprint(Guid id, Sprint sprint)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchSprint(Guid id, [FromBody]UpdateSprintDto dto)
         {
-            if (id != sprint.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(sprint).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SprintExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            var command = new UpdateSprintCommand(
+                id, dto.Title, dto.Goal, dto.StartDate, dto.EndDate, dto.ProjectId, dto.Status
+            );
+            await _mediator.Send(command);
             return NoContent();
         }
 

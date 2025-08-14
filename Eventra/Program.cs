@@ -1,5 +1,6 @@
 using Application;
 using Application.Common.Behaviors;
+using Application.Common.Interfaces;
 using Application.Projects.Commands.CreateProject;
 //using Application.Users.Validators;
 using Domain.Interfaces;
@@ -10,6 +11,7 @@ using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 namespace Eventra
 {
     public class Program
@@ -37,6 +39,13 @@ namespace Eventra
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ISprintRepository, SprintRepository>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            builder.Services.AddScoped<ISprintValidationService,  SprintValidationService>();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    // This makes enums serialize/deserialize as their string names
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

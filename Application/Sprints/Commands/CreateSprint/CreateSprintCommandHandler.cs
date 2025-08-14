@@ -28,7 +28,7 @@ namespace Application.Sprints.Commands.CreateSprint
                 EndDate = request.EndDate,
                 Status = SprintStatus.Planned
             };
-            await _sprintRepository.AddSprintAsync(sprint);
+            await _sprintRepository.AddAsync(sprint);
             return sprint.Id;
         }
     }

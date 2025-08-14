@@ -9,6 +9,8 @@ namespace Domain.Interfaces
 {
     public interface ISprintRepository
     {
-        public Task AddSprintAsync(Sprint sprint);
+        Task AddAsync(Sprint sprint);
+        Task UpdateAsync(Sprint sprint);
+        Task<Sprint?> GetByIdAsync(Guid? Id);
     }
 }
