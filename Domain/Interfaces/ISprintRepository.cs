@@ -9,16 +9,16 @@ namespace Domain.Interfaces
 {
     public interface ISprintRepository
     {
-        Task AddAsync(Sprint sprint);
-        Task UpdateAsync(Sprint sprint);
-        Task<Sprint?> GetByIdAsync(Guid? Id);
-        Task<IEnumerable<Sprint>> GetAllAsync(Guid projectId,
+        Task AddSprintAsync(Sprint sprint, CancellationToken ct);
+        Task UpdateSprintAsync(Sprint sprint, CancellationToken ct);
+        Task<Sprint?> GetSprintByIdAsync(Guid? Id, CancellationToken ct);
+        Task<IEnumerable<Sprint>> GetAllSprintsAsync(Guid projectId,
                                 string? title,
                                 SprintStatus? status,
                                 DateTime? from,
                                 DateTime? to,
                                 CancellationToken cancellationToken
                             );
-        Task DeleteAsync(Guid id);
+        Task DeleteSprintAsync(Guid id, CancellationToken ct);
     }
 }

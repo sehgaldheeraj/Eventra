@@ -12,6 +12,6 @@ namespace Domain.Interfaces
     {
         public Task<Guid> RegisterUserAsync(User user);
         public Task<User?> GetUserByEmailAsync(string email);
-        public Task<User?> GetUserByIdAsync(Guid id);
+        public Task<User?> GetUserByIdAsync(Guid? id);
     }
 }

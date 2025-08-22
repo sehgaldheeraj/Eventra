@@ -19,7 +19,7 @@ namespace Application.Sprints.Commands.UpdateSprint
         public async Task<Unit> Handle(UpdateSprintCommand request, CancellationToken cancellationToken)
         {
 
-            var sprint = await _sprintRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException(nameof(Sprint), request.Id);
+            var sprint = await _sprintRepository.GetSprintByIdAsync(request.Id, cancellationToken) ?? throw new NotFoundException(nameof(Sprint), request.Id);
 
             sprint.ProjectId = request.ProjectId ?? sprint.ProjectId;
             sprint.Title     = request.Title     ?? sprint.Title;
@@ -28,7 +28,7 @@ namespace Application.Sprints.Commands.UpdateSprint
             sprint.EndDate   = request.EndDate   ?? sprint.EndDate;
             sprint.Status    = request.Status    ?? sprint.Status;
 
-            await _sprintRepository.UpdateAsync(sprint);
+            await _sprintRepository.UpdateSprintAsync(sprint, cancellationToken);
             return Unit.Value;
         }
     }

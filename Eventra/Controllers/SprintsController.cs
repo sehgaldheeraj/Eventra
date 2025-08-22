@@ -85,7 +85,7 @@ namespace Eventra.Controllers
 
         // DELETE: api/Sprints/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResponse<string>>> DeleteSprint(DeleteSprintCommand command)
+        public async Task<ActionResult<ApiResponse<string>>> DeleteSprint(Guid id, DeleteSprintCommand command)
         {
             //var command = 
             await _mediator.Send(command);

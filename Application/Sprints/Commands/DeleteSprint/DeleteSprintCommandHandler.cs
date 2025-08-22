@@ -17,7 +17,7 @@ namespace Application.Sprints.Commands.DeleteSprint
         }
         public async Task<Unit> Handle(DeleteSprintCommand command, CancellationToken ct)
         {
-            await _sprintRepository.DeleteAsync(command.Id);
+            await _sprintRepository.DeleteSprintAsync(command.Id, ct);
             return Unit.Value;
         }
     }

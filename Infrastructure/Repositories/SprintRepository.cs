@@ -17,21 +17,21 @@ namespace Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task AddAsync(Sprint sprint)
+        public async Task AddSprintAsync(Sprint sprint, CancellationToken ct)
         {
-            _context.Sprints.Add(sprint);
-            await _context.SaveChangesAsync();
+            await _context.Sprints.AddAsync(sprint, ct);
+            await _context.SaveChangesAsync(ct);
         }
-        public async Task UpdateAsync(Sprint sprint)
+        public async Task UpdateSprintAsync(Sprint sprint, CancellationToken ct)
         {
             _context.Sprints.Update(sprint);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
         }
-        public async Task<Sprint?> GetByIdAsync(Guid? Id)
+        public async Task<Sprint?> GetSprintByIdAsync(Guid? Id, CancellationToken ct)
         {
-            return await _context.Sprints.Include(s => s.Project).FirstOrDefaultAsync(u => u.Id == Id);
+            return await _context.Sprints.Include(s => s.Project).FirstOrDefaultAsync(u => u.Id == Id, ct);
         }
-        public async Task<IEnumerable<Sprint>> GetAllAsync(Guid projectId,
+        public async Task<IEnumerable<Sprint>> GetAllSprintsAsync(Guid projectId,
                                 string? title,
                                 SprintStatus? status,
                                 DateTime? from,
@@ -71,12 +71,12 @@ namespace Infrastructure.Repositories
 
             return await query.Include(s => s.Project).ToListAsync(cancellationToken);
         }
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteSprintAsync(Guid id, CancellationToken ct)
         {
             var sprint = new Sprint { Id = id };
             _context.Sprints.Attach(sprint);
             _context.Sprints.Remove(sprint);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
         }
     }
 }

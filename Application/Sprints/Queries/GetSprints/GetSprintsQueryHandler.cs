@@ -19,7 +19,7 @@ namespace Application.Sprints.Queries.GetSprints
         public async Task<IEnumerable<Sprint>> Handle(GetSprintsQuery query, CancellationToken cancellationToken)
         {
             
-            return await _sprintRepository.GetAllAsync(
+            return await _sprintRepository.GetAllSprintsAsync(
                 query.ProjectId,
                 query.Title,
                 query.Status,

@@ -16,6 +16,7 @@ namespace Infrastructure.Persistence
         public DbSet<Project> Projects { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Sprint> Sprints { get; set; } = null!;
+        public DbSet<Issue> Issues { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
