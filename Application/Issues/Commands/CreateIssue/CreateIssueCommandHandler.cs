@@ -14,39 +14,69 @@ namespace Application.Issues.Commands.CreateIssue
     {
         private readonly IIssueRepository _issueRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IProjectRepository _projectRepository;
         private readonly ISprintRepository _sprintRepository;
 
-        public CreateIssueCommandHandler(IIssueRepository issueRepository, IUserRepository userRepository, ISprintRepository sprintRepository)
+        public CreateIssueCommandHandler(IIssueRepository issueRepository, IUserRepository userRepository, IProjectRepository projectRepository, ISprintRepository sprintRepository)
         {
             _issueRepository = issueRepository;
             _userRepository = userRepository;
+            _projectRepository = projectRepository;
             _sprintRepository = sprintRepository;
         }
 
         public async Task<Guid> Handle(CreateIssueCommand command, CancellationToken cancellationToken)
         {
+            // 1. Validate assigner
             var assigner = await _userRepository.GetUserByIdAsync(command.AssignerId);
-            if (assigner == null) {
-                throw new Exception("Assigner Not Found");
-            }
+            if (assigner == null)
+                throw new Exception($"Assigner with Id {command.AssignerId} was not found.");
 
+            // 2. Validate assignee (if provided)
             User? assignee = null;
             if (command.AssigneeId.HasValue)
+            {
                 assignee = await _userRepository.GetUserByIdAsync(command.AssigneeId);
+                if (assignee == null)
+                    throw new Exception($"Assignee with Id {command.AssigneeId.Value} was not found.");
+            }
 
+            // 3. Validate project (required)
+            var project = await _projectRepository.GetAsync(command.ProjectId);
+            if (project == null)
+                throw new Exception($"Project with Id {command.ProjectId} was not found.");
+
+            // 4. Validate sprint (optional)
             Sprint? sprint = null;
-            if(command.SprintId.HasValue)
-                sprint = await _sprintRepository.GetSprintByIdAsync(command.SprintId, cancellationToken);
+            if (command.SprintId.HasValue)
+            {
+                sprint = await _sprintRepository.GetSprintByIdAsync(command.SprintId.Value, cancellationToken);
+                if (sprint == null)
+                    throw new Exception($"Sprint with Id {command.SprintId.Value} was not found.");
+            }
 
+            // 5. Validate parent issue (optional)
+            Issue? parentIssue = null;
+            if (command.ParentIssueId.HasValue)
+            {
+                parentIssue = await _issueRepository.GetIssueByIdAsync(command.ParentIssueId.Value, cancellationToken);
+                if (parentIssue == null)
+                    throw new Exception($"Parent issue with Id {command.ParentIssueId.Value} was not found.");
+            }
+
+            // 6. Create and persist
             var issue = IssueFactory.Create(
                 command.Title,
                 command.Description,
                 command.AssignerId, assigner,
-                command.ParentIssueId,
+                command.ProjectId, project,
+                command.ParentIssueId, parentIssue,
                 command.SprintId, sprint,
-                command.AssigneeId, assignee    
+                command.AssigneeId, assignee
             );
+
             await _issueRepository.CreateIssueAsync(issue, cancellationToken);
+
             return issue.Id;
 
         }

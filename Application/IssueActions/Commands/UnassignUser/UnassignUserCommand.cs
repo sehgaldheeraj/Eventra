@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Sprints.Commands.DeleteSprint
+namespace Application.IssueActions.Commands.UnassignUser
 {
-    public record DeleteSprintCommand(Guid Id) : IRequest<Unit>;
+    public record UnassignUserCommand(Guid IssueId) : IRequest<Unit>;
 }

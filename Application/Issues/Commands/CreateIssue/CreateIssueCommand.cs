@@ -11,6 +11,7 @@ namespace Application.Issues.Commands.CreateIssue
     {
         public string Title { get; set; }
         public string Description { get; set; }
+        public Guid ProjectId { get; set; }
         public Guid? ParentIssueId { get; set; }
         public Guid? SprintId { get; set; }
         public Guid AssignerId { get; set; }

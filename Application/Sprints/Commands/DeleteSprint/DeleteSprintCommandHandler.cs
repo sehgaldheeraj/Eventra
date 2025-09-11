@@ -8,7 +8,7 @@ using MediatR;
 using Domain.Interfaces;
 namespace Application.Sprints.Commands.DeleteSprint
 {
-    public class DeleteSprintCommandHandler : IRequest<Guid>
+    public class DeleteSprintCommandHandler : IRequestHandler<DeleteSprintCommand, Unit>
     {
         private readonly ISprintRepository _sprintRepository;
         public DeleteSprintCommandHandler(ISprintRepository sprintRepository)

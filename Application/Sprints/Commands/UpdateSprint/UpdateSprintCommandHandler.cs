@@ -21,12 +21,14 @@ namespace Application.Sprints.Commands.UpdateSprint
 
             var sprint = await _sprintRepository.GetSprintByIdAsync(request.Id, cancellationToken) ?? throw new NotFoundException(nameof(Sprint), request.Id);
 
-            sprint.ProjectId = request.ProjectId ?? sprint.ProjectId;
-            sprint.Title     = request.Title     ?? sprint.Title;
-            sprint.Goal      = request.Goal      ?? sprint.Goal;
-            sprint.StartDate = request.StartDate ?? sprint.StartDate;
-            sprint.EndDate   = request.EndDate   ?? sprint.EndDate;
-            sprint.Status    = request.Status    ?? sprint.Status;
+            sprint.UpdateDetails(
+                projectId: request.ProjectId,
+                title: request.Title,
+                goal: request.Goal,
+                startDate: request.StartDate,
+                endDate: request.EndDate,
+                status: request.Status
+            );
 
             await _sprintRepository.UpdateSprintAsync(sprint, cancellationToken);
             return Unit.Value;

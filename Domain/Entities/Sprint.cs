@@ -10,31 +10,123 @@ namespace Domain.Entities
 {
     public class Sprint
     {
-        [Key]
-        public Guid Id { get; set; }
+        // ---- Identity ----
+        public Guid Id { get; private set; }
 
-        [Required]
-        public Guid ProjectId { get; set; }
+        // ---- Core Fields ----
+        public string Title { get; private set; }
+        public string Goal { get; private set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string Title { get; set; }
+        public DateTime StartDate { get; private set; }
+        public DateTime EndDate { get; private set; }
 
-        public string? Goal { get; set; }
+        // ---- Relationships ----
+        public Guid ProjectId { get; private set; }
+        public Project Project { get; private set; }
 
-        [Required]
-        public DateTime StartDate { get; set; }
+        public ICollection<Issue> Issues { get; private set; } = new List<Issue>();
 
-        [Required]
-        public DateTime EndDate { get; set; }
+        // ---- State ----
+        public SprintStatus Status { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? ActivatedAt { get; private set; }
+        public DateTime? CompletedAt { get; private set; }
 
-        [Required]
-        public SprintStatus Status { get; set; } = SprintStatus.Planned;
+        private Sprint() { } // EF Core ctor
 
-        [ForeignKey(nameof(ProjectId))]
-        public Project? Project { get; set; }
+        public Sprint(string title, string goal, DateTime startDate, DateTime endDate, Guid projectId, Project project)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Sprint name is required.", nameof(title));
 
-        // Future: public ICollection<Issue> Issues { get; set; }
+            if (endDate <= startDate)
+                throw new ArgumentException("Sprint end date must be after start date.");
+
+            Id = Guid.NewGuid();
+            Title = title;
+            Goal = goal ?? string.Empty;
+            StartDate = startDate;
+            EndDate = endDate;
+            CreatedAt = DateTime.UtcNow;
+
+            ProjectId = projectId;
+            Project = project ?? throw new ArgumentNullException(nameof(project));
+
+            Status = SprintStatus.Planned; // explicit default
+        }
+
+        // ---- Core Mutators ----
+        public void UpdateDetails(
+           Guid? projectId = null,
+           string? title = null,
+           string? goal = null,
+           DateTime? startDate = null,
+           DateTime? endDate = null,
+           SprintStatus? status = null
+       )
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+                Title = title;
+
+            if (goal != null)
+                Goal = goal;
+
+            if (startDate.HasValue)
+                StartDate = startDate.Value;
+
+            if (endDate.HasValue)
+                EndDate = endDate.Value;
+
+            if (startDate.HasValue || endDate.HasValue)
+            {
+                if (EndDate <= StartDate)
+                    throw new ArgumentException("Sprint end date must be after start date.");
+            }
+
+            if (projectId.HasValue)
+                ProjectId = projectId.Value;
+
+            if (status.HasValue)
+                Status = status.Value;
+        }
+
+
+        // ---- Status Transitions ----
+        public void Start()
+        {
+            if (Status != SprintStatus.Planned)
+                throw new InvalidOperationException("Only planned sprints can be started.");
+
+            ActivatedAt = DateTime.UtcNow;
+            Status = SprintStatus.Active;
+        }
+
+        public void Complete()
+        {
+            if (Status != SprintStatus.Active)
+                throw new InvalidOperationException("Only active sprints can be completed.");
+
+            CompletedAt = DateTime.UtcNow;
+            Status = SprintStatus.Completed;
+        }
+
+        public void Cancel()
+        {
+            if (Status == SprintStatus.Completed)
+                throw new InvalidOperationException("Cannot cancel a completed sprint.");
+
+            Status = SprintStatus.Cancelled;
+        }
+
+        public void Reopen()
+        {
+            if (Status != SprintStatus.Completed && Status != SprintStatus.Cancelled)
+                throw new InvalidOperationException("Only completed or cancelled sprints can be reopened.");
+
+            CompletedAt = null;
+            ActivatedAt = null;
+            Status = SprintStatus.Planned;
+        }
 
     }
     public enum SprintStatus

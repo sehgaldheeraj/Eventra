@@ -73,9 +73,12 @@ namespace Infrastructure.Repositories
         }
         public async Task DeleteSprintAsync(Guid id, CancellationToken ct)
         {
-            var sprint = new Sprint { Id = id };
-            _context.Sprints.Attach(sprint);
+            var sprint = await _context.Sprints.FirstOrDefaultAsync(s => s.Id == id, ct) ?? throw new KeyNotFoundException($"Sprint {id} not found.");
+            if (sprint.Status == SprintStatus.Completed)
+                throw new InvalidOperationException("Cannot delete a completed sprint.");
+
             _context.Sprints.Remove(sprint);
+
             await _context.SaveChangesAsync(ct);
         }
     }

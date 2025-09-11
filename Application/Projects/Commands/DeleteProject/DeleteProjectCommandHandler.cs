@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace Application.Projects.Commands.DeleteProject
 {
-    public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand>
+    public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand, Unit>
     {
         private readonly IProjectRepository _projectRepository;
         public DeleteProjectCommandHandler(IProjectRepository projectRepository) {
             _projectRepository = projectRepository;
         }
-        public async Task Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
         {
             var project = await _projectRepository.GetAsync(request.Id) ?? throw new NotFoundException("Project", request.Id);
             await _projectRepository.DeleteAsync(project);
-
+            return Unit.Value;
         }
     }
 }

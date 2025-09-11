@@ -10,22 +10,22 @@ namespace Domain.Factories
             string description,
             Guid assignerId,         // The creator of the issue (mandatory)
             User assigner,
+            Guid projectId,
+            Project project,
             Guid? parentIssueId = null,
+            Issue? parentIssue = null,
             Guid? sprintId = null,
             Sprint? sprint = null,
             Guid? assigneeId = null,
             User? assignee = null
         )
         {
-            var issue = new Issue(title, description);
+            // 🔹 Constructor enforces assigner and project 
+            var issue = new Issue(title, description, assignerId, assigner, projectId, project);
 
-            // 🔹 Always set assigner — every issue must be created by someone
-            issue.SetAssigner(assignerId, assigner);
-
-            // 🔹 Optional: assign to a parent issue
             if (parentIssueId.HasValue)
             {
-                issue.AssignParent(parentIssueId.Value);
+                issue.SetAsSubIssue(parentIssueId.Value, parentIssue);
             }
 
             // 🔹 Optional: assign to sprint
@@ -34,13 +34,18 @@ namespace Domain.Factories
                 issue.AssignToSprint(sprintId.Value, sprint);
             }
 
-            // 🔹 Optional: assign an initial assignee (can be left unassigned)
+            // 🔹 Optional: assign an initial assignee
             if (assigneeId.HasValue && assignee != null)
             {
                 issue.AssignAssignee(assigneeId.Value, assignee);
             }
 
-            // Status auto-updates inside Issue entity
+            // 🟢 Status is explicit now. If sprint given → ToDo, else Backlog.
+            if (sprintId.HasValue)
+            {
+                issue.MoveToToDo();
+            }
+
             return issue;
         }
     }

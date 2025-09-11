@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Projects.Commands.UpdateProject
 {
-    public class UpdateProjectCommand : IRequest
+    public class UpdateProjectCommand : IRequest<Unit>
     {
         public Guid Id { get; set; } 
         public string Name { get; set; } = string.Empty;

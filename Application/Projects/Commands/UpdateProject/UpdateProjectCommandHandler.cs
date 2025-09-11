@@ -9,19 +9,20 @@ using Application.Common.Exceptions;
 using System.Dynamic;
 namespace Application.Projects.Commands.UpdateProject
 {
-    public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand>
+    public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Unit>
     {
         private readonly IProjectRepository _projectRepository;
         public UpdateProjectCommandHandler(IProjectRepository projectRepository)
         {
             _projectRepository = projectRepository;
         }
-        public async Task Handle(UpdateProjectCommand request, CancellationToken cancellation)
+        public async Task<Unit> Handle(UpdateProjectCommand request, CancellationToken cancellation)
         {
             var project =await _projectRepository.GetAsync(request.Id) ?? throw new NotFoundException("Project", request.Id);
             project.Name = request.Name;
             project.Description = request.Description;
             await _projectRepository.UpdateAsync(project);
+            return Unit.Value;
         }
     }
 }

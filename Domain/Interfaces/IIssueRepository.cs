@@ -11,5 +11,12 @@ namespace Domain.Interfaces
     {
         Task CreateIssueAsync(Issue issue, CancellationToken cancellationToken);
         Task<Issue?> GetIssueByIdAsync(Guid? id,  CancellationToken cancellationToken);
+        Task UpdateIssueAsync(Issue issue, CancellationToken ct);
+        Task<IEnumerable<Issue>> GetIssuesAsync(
+            Guid? parentIssueId,
+            Guid? sprintId,
+            Guid? userId,
+            Guid? projectId,
+            CancellationToken ct);
     }
 }

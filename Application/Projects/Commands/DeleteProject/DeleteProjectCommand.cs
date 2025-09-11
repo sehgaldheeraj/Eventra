@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 namespace Application.Projects.Commands.DeleteProject
 {
-    public class DeleteProjectCommand : IRequest
+    public class DeleteProjectCommand : IRequest<Unit>
     {
         public Guid Id { get; set; }
         public DeleteProjectCommand(Guid id)

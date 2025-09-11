@@ -20,8 +20,11 @@ namespace Domain.Entities
         public Guid? SprintId { get; private set; }
         public Sprint? Sprint { get; private set; }
 
-        public Guid? AssignerId { get; private set; }
-        public User? Assigner { get; private set; }
+        public Guid ProjectId {get; private set; }
+        public Project? Project { get; private set; }
+
+        public Guid AssignerId { get; private set; }
+        public User Assigner { get; private set; }
 
         public Guid? AssigneeId { get; private set; }
         public User? Assignee { get; private set; }
@@ -37,98 +40,118 @@ namespace Domain.Entities
         private Issue() { } // EF Core ctor
 
         // ---- Constructor ----
-        public Issue(string title, string description)
+        public Issue(string title, string description, Guid assignerId, User assigner, Guid projectId, Project project)
         {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Title is required.", nameof(title));
+
             Id = Guid.NewGuid();
             Title = title;
-            Description = description;
+            Description = description ?? string.Empty;
             CreatedAt = DateTime.UtcNow;
-            UpdateStatus();
+
+            AssignerId = assignerId;
+            Assigner = assigner ?? throw new ArgumentNullException(nameof(assigner));
+
+            ProjectId = projectId;
+            Project = project;
+
+            Status = IssueStatus.Backlog; // explicit default
         }
 
-        // ---- Domain Behaviors ----
-
+        // ---- Details ----
         public void UpdateDetails(string title, string description)
         {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Title is required.", nameof(title));
+
             Title = title;
-            Description = description;
+            Description = description ?? string.Empty;
         }
 
-        // ----- Parent Issue -----
-        public void AssignParent(Guid? parentIssueId)
-        {
-            ParentIssueId = parentIssueId;
-            UpdateStatus();
-        }
-
-        // ----- Sprint -----
-        public void AssignToSprint(Guid sprintId, Sprint sprint)
-        {
-            SprintId = sprintId;
-            Sprint = sprint;
-            UpdateStatus();
-        }
-
-        public void UnassignFromSprint()
-        {
-            SprintId = null;
-            Sprint = null;
-            UpdateStatus();
-        }
-
-        // ----- Assignee (worker) -----
+        // ---- Assignee ----
         public void AssignAssignee(Guid assigneeId, User assignee)
         {
             AssigneeId = assigneeId;
-            Assignee = assignee;
-            UpdateStatus();
+            Assignee = assignee ?? throw new ArgumentNullException(nameof(assignee));
         }
 
         public void UnassignAssignee()
         {
             AssigneeId = null;
             Assignee = null;
-            UpdateStatus();
         }
 
-        // ----- Assigner (delegator) -----
-        public void SetAssigner(Guid assignerId, User assigner)
+        // ____ Sub Issue ----
+        public void SetAsSubIssue(Guid issueId, Issue issue)
         {
-            AssignerId = assignerId;
-            Assigner = assigner;
-            // Assigner doesn’t affect workflow state → no UpdateStatus()
+            ParentIssueId = issueId;
+            ParentIssue = issue ?? throw new ArgumentNullException(nameof(issue));
         }
 
-        public void ClearAssigner()
+        // ---- Sprint ----
+        public void AssignToSprint(Guid sprintId, Sprint sprint)
         {
-            AssignerId = null;
-            Assigner = null;
+            SprintId = sprintId;
+            Sprint = sprint ?? throw new ArgumentNullException(nameof(sprint));
         }
 
-        // ----- Status Transitions -----
+        public void UnassignFromSprint()
+        {
+            SprintId = null;
+            Sprint = null;
+        }
+
+        // ---- Status Transitions ----
+        public void MoveToBacklog()
+        {
+            if (Status == IssueStatus.Closed)
+                throw new InvalidOperationException("Cannot move a closed issue back to Backlog. Reopen first.");
+
+            Status = IssueStatus.Backlog;
+        }
+
+        public void MoveToToDo()
+        {
+            if (SprintId == null)
+                throw new InvalidOperationException("Cannot move to To Do without being in a Sprint.");
+
+            if (Status == IssueStatus.Closed)
+                throw new InvalidOperationException("Closed issues cannot be moved. Reopen first.");
+
+            Status = IssueStatus.ToDo;
+        }
+
+        public void MoveToInProgress()
+        {
+            if (AssigneeId == null)
+                throw new InvalidOperationException("Cannot move to In Progress without an Assignee.");
+
+            if (Status == IssueStatus.Closed)
+                throw new InvalidOperationException("Closed issues cannot be moved. Reopen first.");
+
+            Status = IssueStatus.InProgress;
+        }
+
         public void Close()
         {
+            if (Status == IssueStatus.Closed)
+                return; // already closed
+
             ClosedAt = DateTime.UtcNow;
-            UpdateStatus();
+            Status = IssueStatus.Closed;
         }
 
         public void Reopen()
         {
-            ClosedAt = null;
-            UpdateStatus();
-        }
+            if (Status != IssueStatus.Closed)
+                throw new InvalidOperationException("Only closed issues can be reopened.");
 
-        // ---- Invariant Enforcement ----
-        private void UpdateStatus()
-        {
-            if (SprintId == null)
-                Status = IssueStatus.Backlog;
-            else if (ClosedAt.HasValue)
-                Status = IssueStatus.Closed;
-            else if (AssigneeId == null)
-                Status = IssueStatus.ToDo;
-            else
-                Status = IssueStatus.InProgress;
+            ClosedAt = null;
+
+            // 🟢 You can decide logic here: reopen to backlog always,
+            // or if Sprint is set, reopen to ToDo.
+            Status = SprintId == null ? IssueStatus.Backlog : IssueStatus.ToDo;
         }
     }
 
