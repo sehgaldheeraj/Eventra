@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.Common.Exceptions
 {
-    public class AppException : Exception
+    public class AppException(string publicMessage, int statusCode, string? internalMessage = null) : Exception(internalMessage ?? publicMessage)
     {
-        public AppException(string message) : base(message) { }
+        public int StatusCode { get; } = statusCode;
+        public string PublicMessage { get; } = publicMessage;
     }
 }

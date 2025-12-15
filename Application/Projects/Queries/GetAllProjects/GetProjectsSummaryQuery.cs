@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Projects.ReadDtos;
+using Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Projects.Queries.GetAllProjects
 {
-    public class GetAllProjectsQuery : IRequest<List<Project>>
+    public class GetProjectsSummaryQuery : IRequest<List<ProjectSummary>>
     {
     }
 }

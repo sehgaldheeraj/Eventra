@@ -35,7 +35,7 @@ namespace Eventra.Controllers
                 "User registered successfully."
             );
 
-            return CreatedAtAction(nameof(GetUserProfile), new { id = id }, response);
+            return CreatedAtAction(nameof(GetUserProfile), new { id }, response);
         }
 
         /// <summary>

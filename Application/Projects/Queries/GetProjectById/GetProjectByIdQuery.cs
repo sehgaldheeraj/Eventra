@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Projects.ReadDtos;
+using Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,8 @@ using System.Threading.Tasks;
 
 namespace Application.Projects.Queries.GetProjectById
 {
-    public class GetProjectByIdQuery : IRequest<Project?>
+    public class GetProjectByIdQuery(Guid id) : IRequest<ProjectOverview?>
     {
-        public Guid Id;
-        public GetProjectByIdQuery(Guid id) { 
-            Id = id;
-        }
+        public Guid Id = id;
     }
 }

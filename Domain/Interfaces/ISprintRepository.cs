@@ -11,7 +11,7 @@ namespace Domain.Interfaces
     {
         Task AddSprintAsync(Sprint sprint, CancellationToken ct);
         Task UpdateSprintAsync(Sprint sprint, CancellationToken ct);
-        Task<Sprint?> GetSprintByIdAsync(Guid? Id, CancellationToken ct);
+        Task<Sprint?> GetSprintByIdAsync(Guid Id, CancellationToken ct);
         Task<IEnumerable<Sprint>> GetAllSprintsAsync(Guid projectId,
                                 string? title,
                                 SprintStatus? status,
@@ -19,6 +19,6 @@ namespace Domain.Interfaces
                                 DateTime? to,
                                 CancellationToken cancellationToken
                             );
-        Task DeleteSprintAsync(Guid id, CancellationToken ct);
+        Task DeleteSprintAsync(Sprint sprint, CancellationToken ct);
     }
 }

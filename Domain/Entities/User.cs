@@ -9,30 +9,14 @@ namespace Domain.Entities
 {
     public class User
     {
-        [Key]
         public Guid Id { get; set; }
-
-        [Required]
-        [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
-
-        [Required]
-        [EmailAddress]
-        [MaxLength(255)]
         public string Email { get; set; } = string.Empty;
-
-        [Required]
-        [MinLength(6)]
         public string Password { get; set; } = string.Empty;
-
-        [Required]
-        [MaxLength(50)]
         public string Role { get; set; } = "User";
-
-        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public ICollection<Issue> AssignedIssues { get; private set; } = [];
+        public ICollection<Issue> CreatedIssues { get; private set; } = [];
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
+using Application.Projects.ReadDtos;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
@@ -11,16 +13,19 @@ using System.Threading.Tasks;
 
 namespace Application.Sprints.Commands.CreateSprint
 {
-    public class CreateSprintCommandHandler(ISprintRepository sprintRepository, IProjectRepository projectRepository) : IRequestHandler<CreateSprintCommand, Guid>
+    public class CreateSprintCommandHandler(ISprintRepository sprintRepository, IProjectQueryRepository projectRepository) : IRequestHandler<CreateSprintCommand, Guid>
     {
         private readonly ISprintRepository _sprintRepository = sprintRepository;
-        private readonly IProjectRepository _projectRepository = projectRepository;
+        private readonly IProjectQueryRepository _projectRepository = projectRepository;
 
         public async Task<Guid> Handle(CreateSprintCommand request, CancellationToken cancellationToken)
         {
-            Project project = await _projectRepository.GetAsync(request.ProjectId) ?? throw new NotFoundException(nameof(Project), request.ProjectId);
+            if(!await _projectRepository.ProjectExistsAsync(request.ProjectId))
+            {
+                throw new NotFoundException("Project", request.ProjectId);
+            }
 
-            var sprint = new Sprint(request.Title, request.Goal ?? string.Empty, request.StartDate, request.EndDate, request.ProjectId, project);
+            var sprint = new Sprint(request.Title, request.Goal ?? string.Empty, request.StartDate, request.EndDate, request.ProjectId);
             await _sprintRepository.AddSprintAsync(sprint, cancellationToken);
             return sprint.Id;
         }

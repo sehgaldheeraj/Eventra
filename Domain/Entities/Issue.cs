@@ -15,7 +15,7 @@ namespace Domain.Entities
         // ---- Relationships ----
         public Guid? ParentIssueId { get; private set; }
         public Issue? ParentIssue { get; private set; }
-        public ICollection<Issue> SubIssues { get; private set; } = new List<Issue>();
+        public ICollection<Issue> SubIssues { get; private set; } = [];
 
         public Guid? SprintId { get; private set; }
         public Sprint? Sprint { get; private set; }

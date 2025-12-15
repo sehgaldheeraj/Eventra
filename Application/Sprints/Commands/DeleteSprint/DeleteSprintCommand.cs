@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Sprints.Commands.DeleteSprint
 {
-    public record DeleteSprintCommand(Guid Id) : IRequest<Unit>;
+    public record DeleteSprintCommand(Guid Id) : IRequest<string>;
 }

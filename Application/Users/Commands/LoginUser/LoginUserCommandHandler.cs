@@ -1,6 +1,8 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Exceptions;
+using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -21,15 +23,12 @@ namespace Application.Users.Commands.LoginUser
         }
         public async Task<string> Handle(LoginUserCommand command, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserByEmailAsync(command.Email);
-            if (user == null) { 
-                throw new UnauthorizedAccessException("Invalid Credentials!");
-            }
+            var user = await _userRepository.GetUserByEmailAsync(command.Email) ?? throw new AppException("Invalid credentials", StatusCodes.Status200OK, $"User with email {command.Email} does not exist");
             var hasher = new PasswordHasher<User>();
             var result = hasher.VerifyHashedPassword(user, user.Password, command.Password);
 
             if (result != PasswordVerificationResult.Success)
-                throw new UnauthorizedAccessException("Invalid credentials");
+                throw new BadRequestException("Invalid credentials", "Incorrect password");
 
             return _jwtTokenGenerator.GenerateToken(user);
 

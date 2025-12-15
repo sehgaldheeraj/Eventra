@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace Application.Common.Exceptions
 {
     public class BadRequestException : AppException
     {
-        public BadRequestException(string message) : base(message) { }
+        public BadRequestException(string publicMessage, string? internalMessage) : base(publicMessage, StatusCodes.Status400BadRequest, internalMessage) { }
     }
 }

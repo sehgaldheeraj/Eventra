@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
@@ -10,17 +11,22 @@ using System.Threading.Tasks;
 
 namespace Application.Sprints.Commands.UpdateSprint
 {
-    public class UpdateSprintCommandHandler : IRequestHandler<UpdateSprintCommand, Unit>
+    public class UpdateSprintCommandHandler(ISprintRepository sprintRepository, IProjectQueryRepository projectQueryRepository) : IRequestHandler<UpdateSprintCommand, Guid>
     {
-        private readonly ISprintRepository _sprintRepository;
-        public UpdateSprintCommandHandler(ISprintRepository sprintRepository) { 
-            _sprintRepository = sprintRepository;
-        }
-        public async Task<Unit> Handle(UpdateSprintCommand request, CancellationToken cancellationToken)
+        private readonly ISprintRepository _sprintRepository = sprintRepository;
+        private readonly IProjectQueryRepository _projectQueryRepository = projectQueryRepository;
+
+        public async Task<Guid> Handle(UpdateSprintCommand request, CancellationToken cancellationToken)
         {
 
             var sprint = await _sprintRepository.GetSprintByIdAsync(request.Id, cancellationToken) ?? throw new NotFoundException(nameof(Sprint), request.Id);
-
+            if (request.ProjectId.HasValue)
+            {
+                if (!await _projectQueryRepository.ProjectExistsAsync(request.ProjectId.Value))
+                {
+                    throw new NotFoundException("Project", request.ProjectId.Value);
+                }
+            }
             sprint.UpdateDetails(
                 projectId: request.ProjectId,
                 title: request.Title,
@@ -31,7 +37,7 @@ namespace Application.Sprints.Commands.UpdateSprint
             );
 
             await _sprintRepository.UpdateSprintAsync(sprint, cancellationToken);
-            return Unit.Value;
+            return sprint.Id;
         }
     }
 }

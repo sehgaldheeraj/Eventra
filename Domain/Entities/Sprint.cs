@@ -22,9 +22,9 @@ namespace Domain.Entities
 
         // ---- Relationships ----
         public Guid ProjectId { get; private set; }
-        public Project Project { get; private set; }
+        public Project? Project { get; private set; }
 
-        public ICollection<Issue> Issues { get; private set; } = new List<Issue>();
+        public ICollection<Issue> Issues { get; private set; } = [];
 
         // ---- State ----
         public SprintStatus Status { get; private set; }
@@ -34,7 +34,7 @@ namespace Domain.Entities
 
         private Sprint() { } // EF Core ctor
 
-        public Sprint(string title, string goal, DateTime startDate, DateTime endDate, Guid projectId, Project project)
+        public Sprint(string title, string goal, DateTime startDate, DateTime endDate, Guid projectId)
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("Sprint name is required.", nameof(title));
@@ -50,7 +50,6 @@ namespace Domain.Entities
             CreatedAt = DateTime.UtcNow;
 
             ProjectId = projectId;
-            Project = project ?? throw new ArgumentNullException(nameof(project));
 
             Status = SprintStatus.Planned; // explicit default
         }
@@ -90,7 +89,11 @@ namespace Domain.Entities
                 Status = status.Value;
         }
 
-
+        public void DeleteSprint()
+        {
+            if (Status == SprintStatus.Completed)
+                throw new InvalidOperationException("Cannot delete a completed sprint.");
+        }
         // ---- Status Transitions ----
         public void Start()
         {
