@@ -22,7 +22,7 @@ namespace Application.Sprints.Commands.UpdateSprint
             var sprint = await _sprintRepository.GetSprintByIdAsync(request.Id, cancellationToken) ?? throw new NotFoundException(nameof(Sprint), request.Id);
             if (request.ProjectId.HasValue)
             {
-                if (!await _projectQueryRepository.ProjectExistsAsync(request.ProjectId.Value))
+                if (!await _projectQueryRepository.ProjectExistsAsync(request.ProjectId.Value, cancellationToken))
                 {
                     throw new NotFoundException("Project", request.ProjectId.Value);
                 }

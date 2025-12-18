@@ -10,5 +10,6 @@ namespace Application.Common.Interfaces
     public interface ISprintQueryRepository
     {
         Task<SprintOverview?> GetSprintOverviewAsync(Guid id, CancellationToken ct);
+        Task<bool> SprintExists(Guid id, CancellationToken ct);
     }
 }

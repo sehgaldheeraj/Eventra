@@ -27,6 +27,10 @@ namespace Infrastructure.Repositories
             _context.Sprints.Update(sprint);
             await _context.SaveChangesAsync(ct);
         }
+        public async Task<bool> SprintExists(Guid id, CancellationToken ct)
+        {
+            return await _context.Sprints.AnyAsync(s => s.Id == id, ct);
+        }
         public async Task<SprintOverview?> GetSprintOverviewAsync(Guid id, CancellationToken ct)
         {
             var sprint = await _context.Sprints

@@ -9,29 +9,24 @@ namespace Eventra.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class IssuesForSprintController : ControllerBase
+    public class IssuesForSprintController(IMediator mediator) : ControllerBase
     {
-        private readonly IMediator _mediator;
-        public IssuesForSprintController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        private readonly IMediator _mediator = mediator;
 
         [HttpPut("{issueId:guid}/sprint/{sprintId:guid}")]
-        public async Task<ActionResult<ApiResponse<string>>> AddIssueToSprint(Guid sprintId, Guid issueId)
+        public async Task<ActionResult<ApiResponse<Guid>>> AddIssueToSprint(Guid sprintId, Guid issueId, CancellationToken ct)
         {
-
             var command = new AddToSprintCommand(sprintId, issueId);
-            await _mediator.Send(command, HttpContext.RequestAborted);
-            return ApiResponse<string>.SuccessMessage("Issue added to Sprint successfully");
+            var updatedIssueId = await _mediator.Send(command, ct);
+            return Ok(ApiResponse<Guid>.SuccessResponse(updatedIssueId, $"Issue #{updatedIssueId} added to Sprint #{sprintId} successfully"));
         }
 
         [HttpDelete("{issueId:guid}/sprint")]
-        public async Task<ActionResult<ApiResponse<string>>> RemoveIssueFromSprint(Guid issueId)
+        public async Task<ActionResult<ApiResponse<Guid>>> RemoveIssueFromSprint(Guid issueId, CancellationToken ct)
         {
             var command = new RemoveFromSprintCommand(issueId);
-            await _mediator.Send(command, HttpContext.RequestAborted);
-            return ApiResponse<string>.SuccessMessage("Issue Removed from Sprint successfully");
+            var updatedIssueId = await _mediator.Send(command, ct);
+            return Ok(ApiResponse<Guid>.SuccessResponse(updatedIssueId, $"Issue #{updatedIssueId} Removed from Sprint successfully"));
         }
     }
 }

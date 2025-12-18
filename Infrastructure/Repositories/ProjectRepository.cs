@@ -92,9 +92,9 @@ namespace Infrastructure.Repositories
             })
             .FirstOrDefaultAsync();
         }
-        public async Task<bool> ProjectExistsAsync(Guid id)
+        public async Task<bool> ProjectExistsAsync(Guid id, CancellationToken ct)
         {
-            return await _context.Projects.AnyAsync(p => p.Id == id);
+            return await _context.Projects.AnyAsync(p => p.Id == id, ct);
         }
         public async Task<Project?> GetByIdAsync(Guid id)
         {

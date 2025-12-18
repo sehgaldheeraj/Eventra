@@ -22,17 +22,17 @@ namespace Eventra.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<ProjectSummary>>>> GetProjectsSummary()
+        public async Task<ActionResult<ApiResponse<IEnumerable<ProjectSummary>>>> GetProjectsSummary(CancellationToken ct)
         {
-            var projectsSummary = await _mediator.Send(new GetProjectsSummaryQuery());
+            var projectsSummary = await _mediator.Send(new GetProjectsSummaryQuery(), ct);
             return Ok(ApiResponse<IEnumerable<ProjectSummary>>.SuccessResponse(projectsSummary));
         }
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<ProjectOverview>>> GetProjectOverview(Guid id)
+        public async Task<ActionResult<ApiResponse<ProjectOverview>>> GetProjectOverview(Guid id, CancellationToken ct)
         {
-            var projectOverview = await _mediator.Send(new GetProjectByIdQuery(id));
+            var projectOverview = await _mediator.Send(new GetProjectByIdQuery(id), ct);
 
             if (projectOverview == null)
             {
@@ -44,22 +44,22 @@ namespace Eventra.Controllers
 
         // PUT: api/Projects/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApiResponse<Guid>>> PutProject(Guid id, [FromBody] UpdateProjectCommand command)
+        public async Task<ActionResult<ApiResponse<Guid>>> PutProject(Guid id, [FromBody] UpdateProjectCommand command, CancellationToken ct)
         {
             if (id != command.Id)
             {
                 return BadRequest(ApiResponse<string>.FailResponse("ID in URL does not match ID in body."));
             }
 
-            var projectId = await _mediator.Send(command);
+            var projectId = await _mediator.Send(command, ct);
             return Ok(ApiResponse<Guid>.SuccessResponse(projectId, "Project updated successfully."));
         }
 
         // POST: api/Projects
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Guid>>> PostProject([FromBody] CreateProjectCommand command)
+        public async Task<ActionResult<ApiResponse<Guid>>> PostProject([FromBody] CreateProjectCommand command, CancellationToken ct)
         {
-            var projectId = await _mediator.Send(command);
+            var projectId = await _mediator.Send(command, ct);
 
             var response = ApiResponse<Guid>.SuccessResponse(projectId, "Project created successfully.");
             return CreatedAtAction(nameof(GetProjectOverview), new { id = projectId }, response);
@@ -67,9 +67,9 @@ namespace Eventra.Controllers
 
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResponse<Guid>>> DeleteProject(Guid id)
+        public async Task<ActionResult<ApiResponse<Guid>>> DeleteProject(Guid id, CancellationToken ct)
         {
-            var deletedProjectId = await _mediator.Send(new DeleteProjectCommand(id));
+            var deletedProjectId = await _mediator.Send(new DeleteProjectCommand(id), ct);
             return Ok(ApiResponse<Guid>.SuccessResponse(deletedProjectId, $"Project #{deletedProjectId} deleted successfully."));
         }
     }

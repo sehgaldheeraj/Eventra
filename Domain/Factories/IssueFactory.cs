@@ -8,42 +8,41 @@ namespace Domain.Factories
         public static Issue Create(
             string title,
             string description,
-            Guid assignerId,         // The creator of the issue (mandatory)
-            User assigner,
             Guid projectId,
-            Project project,
+            Guid assignerId,
             Guid? parentIssueId = null,
-            Issue? parentIssue = null,
             Guid? sprintId = null,
-            Sprint? sprint = null,
-            Guid? assigneeId = null,
-            User? assignee = null
+            Guid? assigneeId = null
         )
         {
-            // 🔹 Constructor enforces assigner and project 
-            var issue = new Issue(title, description, assignerId, assigner, projectId, project);
+            // Core construction (IDs only)
+            var issue = new Issue(
+                title,
+                description,
+                projectId,
+                assignerId
+            );
 
+            // Optional: parent issue
             if (parentIssueId.HasValue)
             {
-                issue.SetAsSubIssue(parentIssueId.Value, parentIssue);
+                issue.SetAsSubIssue(parentIssueId.Value);
             }
 
-            // 🔹 Optional: assign to sprint
-            if (sprintId.HasValue && sprint != null)
-            {
-                issue.AssignToSprint(sprintId.Value, sprint);
-            }
-
-            // 🔹 Optional: assign an initial assignee
-            if (assigneeId.HasValue && assignee != null)
-            {
-                issue.AssignAssignee(assigneeId.Value, assignee);
-            }
-
-            // 🟢 Status is explicit now. If sprint given → ToDo, else Backlog.
+            // Optional: sprint
             if (sprintId.HasValue)
             {
+                issue.AssignToSprint(sprintId.Value);
+
+                // Explicit business rule:
+                // If created inside a sprint → starts in ToDo
                 issue.MoveToToDo();
+            }
+
+            // Optional: assignee
+            if (assigneeId.HasValue)
+            {
+                issue.AssignAssignee(assigneeId.Value);
             }
 
             return issue;

@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Interfaces;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -10,13 +11,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(EventraDBContext dbContext) : IUserRepository, IUserQueryRepository
     {
-        private readonly EventraDBContext _dbContext;
-        public UserRepository(EventraDBContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        private readonly EventraDBContext _dbContext = dbContext;
+
         public async Task<Guid> RegisterUserAsync(User user) {
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
@@ -31,6 +29,9 @@ namespace Infrastructure.Repositories
         {
             return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == Id);
         }
-
+        public async Task<bool> UserExistsAsync(Guid userId, CancellationToken ct)
+        {
+            return await _dbContext.Users.AnyAsync(u => u.Id == userId, ct);
+        }
     }
 }

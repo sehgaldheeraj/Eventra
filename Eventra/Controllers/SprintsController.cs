@@ -6,16 +6,8 @@ using Application.Sprints.Queries.GetSprintOverview;
 using Application.Sprints.Queries.GetSprints;
 using Application.Sprints.ReadDtos;
 using Domain.Entities;
-using Infrastructure.Persistence;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Eventra.Controllers
 {

@@ -38,9 +38,10 @@ namespace Eventra
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ISprintRepository, SprintRepository>();
+            builder.Services.AddScoped<IIssueRepository, IssueRepository>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<ISprintValidationService,  SprintValidationService>();
-            builder.Services.AddScoped<IIssueRepository, IssueRepository>();
+            
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {

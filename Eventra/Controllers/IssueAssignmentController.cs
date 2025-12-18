@@ -13,18 +13,18 @@ namespace Eventra.Controllers
         private readonly IMediator _mediator = mediator;
 
         [HttpPut("{issueId:guid}/assignee/{userId:guid}")]
-        public async Task<ActionResult<ApiResponse<string>>> AssignUserToSprint(Guid issueId, Guid userId)
+        public async Task<ActionResult<ApiResponse<Guid>>> AssignUserToSprint(Guid issueId, Guid userId, CancellationToken ct)
         {
-            await _mediator.Send(new AssignUserCommand(issueId, userId), HttpContext.RequestAborted);
+            var updatedIssueId = await _mediator.Send(new AssignUserCommand(issueId, userId), ct);
 
-            return ApiResponse<string>.SuccessResponse("Issue assigned to User successfully");
+            return Ok(ApiResponse<Guid>.SuccessResponse(updatedIssueId, $"Issue #{updatedIssueId} assigned to User #{userId} successfully."));
         }
 
         [HttpDelete("{issueId:guid}/assignee")]
-        public async Task<ActionResult<ApiResponse<string>>> UnassignUserFromSprint(Guid issueId)
+        public async Task<ActionResult<ApiResponse<Guid>>> UnassignUserFromSprint(Guid issueId, CancellationToken ct)
         {
-            await _mediator.Send(new UnassignUserCommand(issueId), HttpContext.RequestAborted);
-            return ApiResponse<string>.SuccessResponse("Issue unassigned successfully");
+            var updatedIssueId = await _mediator.Send(new UnassignUserCommand(issueId), ct);
+            return Ok(ApiResponse<Guid>.SuccessResponse(updatedIssueId, $"Issue #{updatedIssueId} has been unassigned successfully."));
         }
     }
 }

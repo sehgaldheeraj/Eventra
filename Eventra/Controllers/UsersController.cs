@@ -14,22 +14,17 @@ namespace Eventra.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController(IMediator mediator) : ControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public UsersController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        private readonly IMediator _mediator = mediator;
 
         /// <summary>
         /// Registers a new user
         /// </summary>
         [HttpPost("register")]
-        public async Task<ActionResult<ApiResponse<Guid>>> Register([FromBody] RegisterUserCommand request)
+        public async Task<ActionResult<ApiResponse<Guid>>> Register([FromBody] RegisterUserCommand request, CancellationToken ct)
         {
-            var id = await _mediator.Send(request);
+            var id = await _mediator.Send(request, ct);
             var response = ApiResponse<Guid>.SuccessResponse(
                 id,
                 "User registered successfully."
@@ -42,9 +37,9 @@ namespace Eventra.Controllers
         /// Logs in a user and returns JWT
         /// </summary>
         [HttpPost("login")]
-        public async Task<ActionResult<ApiResponse<string>>> Login([FromBody] LoginUserCommand request)
+        public async Task<ActionResult<ApiResponse<string>>> Login([FromBody] LoginUserCommand request, CancellationToken ct)
         {
-            var token = await _mediator.Send(request);
+            var token = await _mediator.Send(request, ct);
             var response = ApiResponse<string>.SuccessResponse(
                 token,
                 "Login successful."
@@ -57,9 +52,9 @@ namespace Eventra.Controllers
         /// Fetches user details based on their id
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<Profile>>> GetUserProfile(Guid id)
+        public async Task<ActionResult<ApiResponse<Profile>>> GetUserProfile(Guid id, CancellationToken ct)
         {
-            var user = await _mediator.Send(new GetUserByIdQuery(id));
+            var user = await _mediator.Send(new GetUserByIdQuery(id), ct);
 
             if (user == null)
                 return NotFound(ApiResponse<string>.FailResponse("User not found."));

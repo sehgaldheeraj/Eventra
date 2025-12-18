@@ -11,21 +11,18 @@ using System.Threading.Tasks;
 
 namespace Application.IssueActions.Commands.RemoveFromSprint
 {
-    public class RemoveFromSprintCommandHandler : IRequestHandler<RemoveFromSprintCommand, Unit>
+    public class RemoveFromSprintCommandHandler(IIssueRepository issueRepository) : IRequestHandler<RemoveFromSprintCommand, Guid>
     {
-        private readonly IIssueRepository _issueRepository;
-        public RemoveFromSprintCommandHandler(IIssueRepository issueRepository)
-        {
-            _issueRepository = issueRepository;
-        }
-        public async Task<Unit> Handle(RemoveFromSprintCommand command, CancellationToken ct)
+        private readonly IIssueRepository _issueRepository = issueRepository;
+
+        public async Task<Guid> Handle(RemoveFromSprintCommand command, CancellationToken ct)
         {
             var issue = await _issueRepository.GetIssueByIdAsync(command.IssueId, ct) ?? throw new NotFoundException(nameof(Issue), command.IssueId);
 
             issue.UnassignFromSprint();
             await _issueRepository.UpdateIssueAsync(issue, ct);
 
-            return Unit.Value;
+            return issue.Id;
         }
     }
 }

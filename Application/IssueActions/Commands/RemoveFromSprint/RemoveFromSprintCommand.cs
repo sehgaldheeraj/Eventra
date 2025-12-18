@@ -7,11 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.IssueActions.Commands.RemoveFromSprint
 {
-    public class RemoveFromSprintCommand : IRequest<Unit>
-    {
-        public Guid IssueId { get; set; }
-        public RemoveFromSprintCommand(Guid issueId) {
-            IssueId = issueId;
-        }
-    }
+    public record RemoveFromSprintCommand(Guid IssueId) : IRequest<Guid>;
 }

@@ -10,13 +10,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class IssueRepository : IIssueRepository
+    public class IssueRepository(EventraDBContext dbContext) : IIssueRepository
     {
-        private readonly EventraDBContext _dbContext;
-        public IssueRepository(EventraDBContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        private readonly EventraDBContext _dbContext = dbContext;
+
         public async Task CreateIssueAsync(Issue issue, CancellationToken ct)
         {
             await _dbContext.Issues.AddAsync(issue, ct);

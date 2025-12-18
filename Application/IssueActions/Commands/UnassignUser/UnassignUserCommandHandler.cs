@@ -11,18 +11,17 @@ using System.Threading.Tasks;
 
 namespace Application.IssueActions.Commands.UnassignUser
 {
-    public class UnassignUserCommandHandler(IIssueRepository issueRepository) : IRequestHandler<UnassignUserCommand, Unit>
+    public class UnassignUserCommandHandler(IIssueRepository issueRepository) : IRequestHandler<UnassignUserCommand, Guid>
     {
         private readonly IIssueRepository _issueRepository = issueRepository;
 
-        public async Task<Unit> Handle(UnassignUserCommand command, CancellationToken ct)
+        public async Task<Guid> Handle(UnassignUserCommand command, CancellationToken ct)
         {
             var issue = await _issueRepository.GetIssueByIdAsync(command.IssueId, ct) ?? throw new NotFoundException(nameof(Issue), command.IssueId);
 
             issue.UnassignAssignee();
             await _issueRepository.UpdateIssueAsync(issue, ct);
-
-            return Unit.Value;
+            return issue.Id;
         }
     }
 }

@@ -11,20 +11,15 @@ using System.Threading.Tasks;
 
 namespace Application.IssueActions.Commands.AssignUser
 {
-    public class AssignUserCommandHandler(IIssueRepository issueRepository, IUserRepository userRepository) : IRequestHandler<AssignUserCommand, Unit>
+    public class AssignUserCommandHandler(IIssueRepository issueRepository) : IRequestHandler<AssignUserCommand, Guid>
     {
-        private readonly IUserRepository _userRepository = userRepository;
         private readonly IIssueRepository _issueRepository = issueRepository;
-
-        public async Task<Unit> Handle(AssignUserCommand command, CancellationToken ct)
+        public async Task<Guid> Handle(AssignUserCommand command, CancellationToken ct)
         {
             var issue = await _issueRepository.GetIssueByIdAsync(command.IssueId, ct) ?? throw new NotFoundException(nameof(Issue), command.IssueId);
-
-            var user = await _userRepository.GetUserByIdAsync(command.UserId) ?? throw new NotFoundException(nameof(User), command.UserId); 
-
-            issue.AssignAssignee(command.UserId, user);
+            issue.AssignAssignee(command.UserId);
             await _issueRepository.UpdateIssueAsync(issue, ct);
-            return Unit.Value;
+            return issue.Id;
         }
     }
 }

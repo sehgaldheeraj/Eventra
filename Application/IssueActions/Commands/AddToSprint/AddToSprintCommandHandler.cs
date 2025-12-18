@@ -11,21 +11,17 @@ using System.Threading.Tasks;
 
 namespace Application.IssueActions.Commands.AddToSprint
 {
-    public class AddToSprintCommandHandler(IIssueRepository issueRepository, ISprintRepository sprintRepository) : IRequestHandler<AddToSprintCommand, Unit>
+    public class AddToSprintCommandHandler(IIssueRepository issueRepository) : IRequestHandler<AddToSprintCommand, Guid>
     {
         private readonly IIssueRepository _issueRepository = issueRepository;
-        private readonly ISprintRepository _sprintRepository = sprintRepository;
 
-        public async Task<Unit> Handle(AddToSprintCommand command, CancellationToken ct)
+        public async Task<Guid> Handle(AddToSprintCommand command, CancellationToken ct)
         {
             var issue = await _issueRepository.GetIssueByIdAsync(command.IssueId, ct) ?? throw new NotFoundException(nameof(Issue), command.IssueId);
 
-            var sprint = await _sprintRepository.GetSprintByIdAsync(command.SprintId, ct) ?? throw new NotFoundException(nameof(Sprint), command.SprintId);
-
-            issue.AssignToSprint(command.SprintId, sprint);
+            issue.AssignToSprint(command.SprintId);
             await _issueRepository.UpdateIssueAsync(issue, ct);
-            return Unit.Value;
-
+            return issue.Id;
         }
     }
 }

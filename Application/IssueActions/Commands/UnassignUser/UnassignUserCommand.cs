@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.IssueActions.Commands.UnassignUser
 {
-    public record UnassignUserCommand(Guid IssueId) : IRequest<Unit>;
+    public record UnassignUserCommand(Guid IssueId) : IRequest<Guid>;
 }

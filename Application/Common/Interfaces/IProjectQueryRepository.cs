@@ -12,6 +12,6 @@ namespace Application.Common.Interfaces
     {
         Task<List<ProjectSummary>> GetProjectsSummaryAsync();
         Task<ProjectOverview?> GetProjectOverviewAsync(Guid id);
-        Task<bool> ProjectExistsAsync(Guid id);
+        Task<bool> ProjectExistsAsync(Guid id, CancellationToken ct);
     }
 }

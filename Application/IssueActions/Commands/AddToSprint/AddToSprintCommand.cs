@@ -8,15 +8,5 @@ using Domain.Entities;
 using MediatR;
 namespace Application.IssueActions.Commands.AddToSprint
 {
-    public class AddToSprintCommand : IRequest<Unit>
-    {
-        public Guid SprintId { get; set; }
-        public Guid IssueId { get; set; }
-
-        public AddToSprintCommand(Guid sprintId, Guid issueId)
-        {
-            SprintId = sprintId;
-            IssueId = issueId;
-        }
-    }
+    public record AddToSprintCommand(Guid SprintId, Guid IssueId) : IRequest<Guid>;
 }

@@ -20,7 +20,7 @@ namespace Application.Sprints.Commands.CreateSprint
 
         public async Task<Guid> Handle(CreateSprintCommand request, CancellationToken cancellationToken)
         {
-            if(!await _projectRepository.ProjectExistsAsync(request.ProjectId))
+            if(!await _projectRepository.ProjectExistsAsync(request.ProjectId, cancellationToken))
             {
                 throw new NotFoundException("Project", request.ProjectId);
             }

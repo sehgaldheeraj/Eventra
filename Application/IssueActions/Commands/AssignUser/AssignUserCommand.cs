@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Application.IssueActions.Commands.AssignUser
 {
-    public record AssignUserCommand(Guid IssueId, Guid UserId) : IRequest<Unit>; 
+    public record AssignUserCommand(Guid IssueId, Guid UserId) : IRequest<Guid>; 
 }
