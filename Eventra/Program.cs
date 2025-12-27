@@ -35,10 +35,50 @@ namespace Eventra
             builder.Services.AddValidatorsFromAssembly(typeof(ValidationBehavior<,>).Assembly);
             //builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Common.Behaviors.ValidationBehavior<,>));
-            builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<ISprintRepository, SprintRepository>();
-            builder.Services.AddScoped<IIssueRepository, IssueRepository>();
+            //builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+            //builder.Services.AddScoped<IUserRepository, UserRepository>();
+            //builder.Services.AddScoped<ISprintRepository, SprintRepository>();
+            //builder.Services.AddScoped<IIssueRepository, IssueRepository>();
+
+            // -------------------- Project --------------------
+            builder.Services.AddScoped<ProjectRepository>();
+
+            builder.Services.AddScoped<IProjectRepository>(
+                sp => sp.GetRequiredService<ProjectRepository>());
+
+            builder.Services.AddScoped<IProjectQueryRepository>(
+                sp => sp.GetRequiredService<ProjectRepository>());
+
+
+            // -------------------- Sprint --------------------
+            builder.Services.AddScoped<SprintRepository>();
+
+            builder.Services.AddScoped<ISprintRepository>(
+                sp => sp.GetRequiredService<SprintRepository>());
+
+            builder.Services.AddScoped<ISprintQueryRepository>(
+                sp => sp.GetRequiredService<SprintRepository>());
+
+
+            // -------------------- User --------------------
+            builder.Services.AddScoped<UserRepository>();
+
+            builder.Services.AddScoped<IUserRepository>(
+                sp => sp.GetRequiredService<UserRepository>());
+
+            builder.Services.AddScoped<IUserQueryRepository>(
+                sp => sp.GetRequiredService<UserRepository>());
+
+
+            // -------------------- Issue --------------------
+            builder.Services.AddScoped<IssueRepository>();
+
+            builder.Services.AddScoped<IIssueRepository>(
+                sp => sp.GetRequiredService<IssueRepository>());
+
+            builder.Services.AddScoped<IIssueQueryRepository>(
+                sp => sp.GetRequiredService<IssueRepository>());
+
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<ISprintValidationService,  SprintValidationService>();
             

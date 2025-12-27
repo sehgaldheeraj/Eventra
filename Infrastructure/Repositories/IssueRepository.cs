@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Interfaces;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class IssueRepository(EventraDBContext dbContext) : IIssueRepository
+    public class IssueRepository(EventraDBContext dbContext) : IIssueRepository, IIssueQueryRepository
     {
         private readonly EventraDBContext _dbContext = dbContext;
 
@@ -27,6 +28,10 @@ namespace Infrastructure.Repositories
         {
             _dbContext.Issues.Update(issue);
             await _dbContext.SaveChangesAsync(ct);
+        }
+        public async Task<bool> IssueExistsAsync(Guid id, CancellationToken ct)
+        {
+            return await _dbContext.Issues.AnyAsync(u => u.Id == id, ct);    
         }
         public async Task<IEnumerable<Issue>> GetIssuesAsync(
             Guid? parentIssueId,
