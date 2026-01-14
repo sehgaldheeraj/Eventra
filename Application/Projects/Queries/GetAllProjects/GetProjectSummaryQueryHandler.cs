@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces.QueryRepositories;
 using Application.Projects.ReadDtos;
 using Domain.Entities;
 using Domain.Interfaces;

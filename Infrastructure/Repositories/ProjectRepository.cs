@@ -1,8 +1,9 @@
 ﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.QueryRepositories;
 using Application.Projects.ReadDtos;
 using Application.Sprints.ReadDtos;
 using Domain.Entities;
+using Domain.Entities.Projects;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using MediatR;

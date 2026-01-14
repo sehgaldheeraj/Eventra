@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Application.Common.Events;
 namespace Infrastructure.Persistence
 {
     public class EventraDBContextFactory : IDesignTimeDbContextFactory<EventraDBContext>
@@ -23,7 +23,7 @@ namespace Infrastructure.Persistence
             var optionsBuilder = new DbContextOptionsBuilder<EventraDBContext>();
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
 
-            return new EventraDBContext(optionsBuilder.Options);
+            return new EventraDBContext(optionsBuilder.Options, new NoOpDomainEventDispatcher());
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Application.Common.Interfaces;
 using Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common.Interfaces.Validations;
 
 namespace Infrastructure.Services
 {

@@ -1,4 +1,8 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Interfaces.Dispatchers;
+using Domain.Common;
+using Domain.Entities;
+using Domain.Entities.Projects;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,16 +11,14 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Infrastructure.Persistence
 {
-    public class EventraDBContext : DbContext
+    public class EventraDBContext(DbContextOptions<EventraDBContext> options, IDomainEventDispatcher dispatcher) : DbContext(options)
     {
-        public EventraDBContext(DbContextOptions<EventraDBContext> options) : base(options)
-        {
-        }
-
+        private readonly IDomainEventDispatcher _dispatcher = dispatcher;
         public DbSet<Project> Projects { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Sprint> Sprints { get; set; } = null!;
         public DbSet<Issue> Issues { get; set; } = null!;
+        public DbSet<Notice> Notices { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -71,6 +73,20 @@ namespace Infrastructure.Persistence
                 entity.Property(s => s.Status)
                       .HasConversion<int>(); // Enum as int
             });
+        }
+        public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
+        {
+            var domainEvents = ChangeTracker
+                .Entries<Entity>()
+                .SelectMany(e => e.Entity.DomainEvents)
+                .ToList();
+            var result = await base.SaveChangesAsync(ct);
+            await _dispatcher.DispatchAsync(domainEvents, ct);
+            foreach (var entry in ChangeTracker.Entries<Entity>())
+            {
+                entry.Entity.ClearDomainEvents();
+            }
+            return result;
         }
     }
 }

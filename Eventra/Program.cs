@@ -1,9 +1,16 @@
 using Application;
 using Application.Common.Behaviors;
+using Application.Common.Events;
 using Application.Common.Interfaces;
+using Application.Common.Interfaces.Broadcasters;
+using Application.Common.Interfaces.Dispatchers;
+using Application.Common.Interfaces.QueryRepositories;
+using Application.Common.Interfaces.Validations;
 using Application.Projects.Commands.CreateProject;
 //using Application.Users.Validators;
 using Domain.Interfaces;
+using Eventra.Broadcasting;
+using Eventra.Hubs;
 using Eventra.Middlewares;
 using FluentValidation;
 using Infrastructure.Persistence;
@@ -22,24 +29,20 @@ namespace Eventra
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
-
             builder.Services.AddDbContext<EventraDBContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
             );
 
+            //Why added only for CreateProject
             builder.Services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssembly(typeof(CreateProjectCommandHandler).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(Application.ApplicationAssemblyMarker).Assembly);
             });
             builder.Services.AddValidatorsFromAssembly(typeof(ValidationBehavior<,>).Assembly);
-            //builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Common.Behaviors.ValidationBehavior<,>));
-            //builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
-            //builder.Services.AddScoped<IUserRepository, UserRepository>();
-            //builder.Services.AddScoped<ISprintRepository, SprintRepository>();
-            //builder.Services.AddScoped<IIssueRepository, IssueRepository>();
-
+            // ------------------- Realtime --------------------
+            builder.Services.AddSignalR();
+            builder.Services.AddScoped<INoticeBroadcaster, SignalRNoticeBroadcaster>();
             // -------------------- Project --------------------
             builder.Services.AddScoped<ProjectRepository>();
 
@@ -79,9 +82,13 @@ namespace Eventra
             builder.Services.AddScoped<IIssueQueryRepository>(
                 sp => sp.GetRequiredService<IssueRepository>());
 
+            // ------------------ Notice -----------------------
+            builder.Services.AddScoped<INoticeRepository, NoticeRepository>();
+            // ------------------- Misc -----------------------
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<ISprintValidationService,  SprintValidationService>();
-            
+            builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -107,6 +114,7 @@ namespace Eventra
 
 
             app.MapControllers();
+            app.MapHub<EventraHub>("/hubs/eventra");
 
             app.Run();
         }

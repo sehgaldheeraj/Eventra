@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Validations;
 
 namespace Application.Sprints.Commands.UpdateSprint
 {

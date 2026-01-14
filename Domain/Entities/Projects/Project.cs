@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Domain.Common;
+using Domain.Entities.Projects.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Domain.Entities.Projects
 {
-    public class Project
+    public class Project : Entity
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -27,6 +29,8 @@ namespace Domain.Entities
             OwnerId = ownerId;
             Description = description;
             CreatedAt = DateTime.UtcNow;
+
+            AddDomainEvent(new ProjectCreated(Id, Name, OwnerId));
         }
         public void UpdateDetails(
            string? name = null,

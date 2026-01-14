@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Interfaces.QueryRepositories;
 using Application.Common.Validation;
 using FluentValidation;
 namespace Application.Issues.Commands.CreateIssue
