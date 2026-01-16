@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 using MediatR;
 namespace Application.Projects.Commands.DeleteProject
 {
-    public class DeleteProjectCommand : IRequest<Guid>
+    public class DeleteProjectCommand(Guid id) : IRequest<Guid>
     {
-        public Guid Id { get; set; }
-        public DeleteProjectCommand(Guid id)
-        {
-            Id = id;
-        }
+        public Guid Id { get; set; } = id;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,8 @@ namespace Application.Common.Interfaces.Broadcasters
 {
     public interface INoticeBroadcaster
     {
-        Task BroadcastProjectCreatedAsync(
-            Guid projectId,
-            string projectName,
-            Guid ownerId,
+        Task BroadcastAsync(
+            Notice notice,
             CancellationToken ct = default
         );
     }

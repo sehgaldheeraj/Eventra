@@ -4,23 +4,22 @@ using Domain.Entities;
 using Domain.Entities.Projects.Events;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Notices.EventHandlers
 {
-    public class ProjectCreatedNoticeHandler(INoticeRepository noticeRepository) : INotificationHandler<DomainEventNotification<ProjectCreated>>
+    public class ProjectOwnerChangedNoticeHandler(INoticeRepository noticeRepository) : INotificationHandler<DomainEventNotification<ProjectOwnerChanged>>
     {
         private readonly INoticeRepository _noticeRepository = noticeRepository;
-        public async Task Handle(DomainEventNotification<ProjectCreated> notification, CancellationToken ct)
+        public async Task Handle(DomainEventNotification<ProjectOwnerChanged> notification, CancellationToken ct)
         {
             var evt = notification.DomainEvent;
-            var notice = ProjectNoticeFactory
-                .From(evt);
+            var notice = ProjectNoticeFactory.From(evt);
             await _noticeRepository.CreateNoticeAsync(notice, ct);
         }
     }

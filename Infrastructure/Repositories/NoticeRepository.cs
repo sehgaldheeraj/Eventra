@@ -13,10 +13,10 @@ namespace Infrastructure.Repositories
     public class NoticeRepository(EventraDBContext context) : INoticeRepository
     {
         private readonly EventraDBContext _context = context;
-        public async Task CreateNoticeAsync(Notice notice)
+        public async Task CreateNoticeAsync(Notice notice, CancellationToken ct)
         {
             _context.Notices.Add(notice);
-            await _context.SaveChangesAsync();  
+            await _context.SaveChangesAsync(ct);  
         }
     }
 }

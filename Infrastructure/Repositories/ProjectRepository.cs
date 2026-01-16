@@ -107,11 +107,5 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
             
         }
-        public async Task DeleteAsync(Project project)
-        {
-           _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
-            
-        }
     }
 }

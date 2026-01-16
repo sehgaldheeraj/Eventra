@@ -20,13 +20,10 @@ namespace Application.Projects.Commands.CreateProject
         }
         public async Task<Guid> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
-            var project = new Project
-            {
-                Name = request.Name,
-                Description = request.Description,
-                OwnerId = request.OwnerId,
-                CreatedAt = DateTime.UtcNow
-            };
+            var project = Project.Create(
+                request.Name,
+                request.OwnerId,
+                request.Description);
             await _projectRepository.AddAsync(project);
             return project.Id;
         }

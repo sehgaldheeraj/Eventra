@@ -9,6 +9,6 @@ namespace Domain.Interfaces
 {       
     public interface INoticeRepository
     {
-        Task CreateNoticeAsync(Notice notice);
+        Task CreateNoticeAsync(Notice notice, CancellationToken ct);
     }
 }

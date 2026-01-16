@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Contexts;
 using Domain.Interfaces;
 using MediatR;
 using System;
@@ -9,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace Application.Projects.Commands.DeleteProject
 {
-    public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand, Guid>
+    public class DeleteProjectCommandHandler(IProjectRepository projectRepository, IUserContext userContext) : IRequestHandler<DeleteProjectCommand, Guid>
     {
-        private readonly IProjectRepository _projectRepository;
-        public DeleteProjectCommandHandler(IProjectRepository projectRepository) {
-            _projectRepository = projectRepository;
-        }
+        private readonly IProjectRepository _projectRepository = projectRepository;
+        private readonly IUserContext _userContext = userContext;
+
         public async Task<Guid> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
         {
             var project = await _projectRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("Project", request.Id);
-            await _projectRepository.DeleteAsync(project);
+            project.Delete(_userContext.UserId);
+            await _projectRepository.UpdateAsync(project);
             return project.Id;
         }
     }

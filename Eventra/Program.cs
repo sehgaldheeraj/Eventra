@@ -3,6 +3,7 @@ using Application.Common.Behaviors;
 using Application.Common.Events;
 using Application.Common.Interfaces;
 using Application.Common.Interfaces.Broadcasters;
+using Application.Common.Interfaces.Contexts;
 using Application.Common.Interfaces.Dispatchers;
 using Application.Common.Interfaces.QueryRepositories;
 using Application.Common.Interfaces.Validations;
@@ -13,11 +14,15 @@ using Eventra.Broadcasting;
 using Eventra.Hubs;
 using Eventra.Middlewares;
 using FluentValidation;
+using Infrastructure.Auth;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json.Serialization;
 namespace Eventra
 {
@@ -27,23 +32,24 @@ namespace Eventra
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            #region Context and Validation Behaviour
 
             builder.Services.AddDbContext<EventraDBContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
             );
 
-            //Why added only for CreateProject
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(Application.ApplicationAssemblyMarker).Assembly);
             });
             builder.Services.AddValidatorsFromAssembly(typeof(ValidationBehavior<,>).Assembly);
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Common.Behaviors.ValidationBehavior<,>));
-            // ------------------- Realtime --------------------
+            #endregion
+            #region Realtime
             builder.Services.AddSignalR();
             builder.Services.AddScoped<INoticeBroadcaster, SignalRNoticeBroadcaster>();
-            // -------------------- Project --------------------
+            #endregion
+            #region Registering Services Lifetime
             builder.Services.AddScoped<ProjectRepository>();
 
             builder.Services.AddScoped<IProjectRepository>(
@@ -88,13 +94,41 @@ namespace Eventra
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<ISprintValidationService,  SprintValidationService>();
             builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-
+            #endregion
+            #region Misc Registrations
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IUserContext, UserContext>();
+            #endregion
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     // This makes enums serialize/deserialize as their string names
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
+            #region Configuring JWT 
+            // JWT Authentication
+            builder.Services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+                        )
+                    };
+                });
+
+            // Authorization
+            builder.Services.AddAuthorization();
+            #endregion
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

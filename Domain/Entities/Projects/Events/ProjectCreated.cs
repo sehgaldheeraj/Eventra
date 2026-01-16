@@ -7,17 +7,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities.Projects.Events
 {
-    public class ProjectCreated : IDomainEvent
+    public class ProjectCreated(Guid projectId, string projectName, Guid createdByUserId) : IDomainEvent
     {
-        public Guid ProjectId { get; set; }
-        public string ProjectName { get; set; }
-        public Guid CreatedByUserId { get; set; }
+        public Guid ProjectId { get; set; } = projectId;
+        public string ProjectName { get; set; } = projectName;
+        public Guid CreatedByUserId { get; set; } = createdByUserId;
         public DateTime OccuredAt { get; set; } = DateTime.UtcNow;
-        public ProjectCreated(Guid projectId, string projectName, Guid createdByUserId)
-        {
-            ProjectId = projectId;
-            ProjectName = projectName;
-            CreatedByUserId = createdByUserId;
-        }
     }
 }

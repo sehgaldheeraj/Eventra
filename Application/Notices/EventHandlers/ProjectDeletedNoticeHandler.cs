@@ -1,22 +1,20 @@
 ﻿using Application.Common.Events;
-using Application.Common.Factories;
-using Domain.Entities;
 using Domain.Entities.Projects.Events;
+using Application.Common.Factories;
 using Domain.Interfaces;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Notices.EventHandlers
 {
-    public class ProjectCreatedNoticeHandler(INoticeRepository noticeRepository) : INotificationHandler<DomainEventNotification<ProjectCreated>>
+    public class ProjectDeletedNoticeHandler(INoticeRepository noticeRepository) : INotificationHandler<DomainEventNotification<ProjectArchived>>
     {
         private readonly INoticeRepository _noticeRepository = noticeRepository;
-        public async Task Handle(DomainEventNotification<ProjectCreated> notification, CancellationToken ct)
+        public async Task Handle(DomainEventNotification<ProjectArchived> notification, CancellationToken ct)
         {
             var evt = notification.DomainEvent;
             var notice = ProjectNoticeFactory

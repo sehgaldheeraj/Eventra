@@ -30,7 +30,7 @@ namespace Application.Common.Behaviors
                     .Where(error => error != null)
                     .ToList();
 
-                if (failures.Any())
+                if (failures.Count == 0)
                     throw new ValidationException(failures);
             }
 

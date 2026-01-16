@@ -18,6 +18,8 @@ namespace Domain.Entities
         public NoticeKind Kind { get; private set; }
         public NoticeSeverity Severity { get; private set; }
 
+        public NoticeType Type { get; private set;}
+
         public string Message { get; private set; }
 
         public Guid? ReplyToNoticeId { get; private set; } // flat replies
@@ -31,6 +33,7 @@ namespace Domain.Entities
             Guid? contextId,
             NoticeKind kind,
             NoticeSeverity severity,
+            NoticeType type,
             string message,
             Guid? replyToNoticeId)
         {
@@ -40,6 +43,7 @@ namespace Domain.Entities
             ContextId = contextId;
             Kind = kind;
             Severity = severity;
+            Type = type;
             Message = message;
             ReplyToNoticeId = replyToNoticeId;
             CreatedAt = DateTime.UtcNow;
@@ -51,6 +55,7 @@ namespace Domain.Entities
            Guid? contextId,
            NoticeKind kind,
            NoticeSeverity severity,
+           NoticeType type,
            string message,
            Guid? replyToNoticeId = null)
         {
@@ -60,6 +65,7 @@ namespace Domain.Entities
                 contextId,
                 kind,
                 severity,
+                type,
                 message,
                 replyToNoticeId);
         }
@@ -88,4 +94,23 @@ namespace Domain.Entities
         Warning,    // Needs attention
         Critical    // Immediate action required
     }
+    public enum NoticeType
+    {
+        ProjectCreated,
+        ProjectArchived,
+        ProjectRestored,
+        ProjectOwnerChanged,
+
+        SprintStarted,
+        SprintCompleted,
+
+        IssueCreated,
+        IssueAssigned,
+        IssueStatusChanged,
+
+        CommentAdded,
+
+        System // fallback
+    }
+
 }
