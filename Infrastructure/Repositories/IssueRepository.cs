@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces.QueryRepositories;
-using Domain.Entities;
+using Domain.Entities.Issues;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

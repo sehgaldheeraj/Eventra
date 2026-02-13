@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Domain.Entities.Sprints;
 using Domain.Interfaces;
 using MediatR;
 using System;

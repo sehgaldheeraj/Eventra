@@ -5,7 +5,7 @@ using Application.Sprints.Commands.UpdateSprint;
 using Application.Sprints.Queries.GetSprintOverview;
 using Application.Sprints.Queries.GetSprints;
 using Application.Sprints.ReadDtos;
-using Domain.Entities;
+using Domain.Entities.Sprints;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

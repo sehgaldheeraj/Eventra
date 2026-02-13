@@ -2,7 +2,7 @@
 using Application.IssueActions.Commands.CloseIssue;
 using Application.Issues.Commands.CreateIssue;
 using Application.Issues.Commands.UpdateIssue;
-using Domain.Entities;
+using Domain.Entities.Issues;
 using Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Http;

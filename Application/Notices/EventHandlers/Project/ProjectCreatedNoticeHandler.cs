@@ -11,7 +11,7 @@ using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Notices.EventHandlers
+namespace Application.Notices.EventHandlers.Project
 {
     public class ProjectCreatedNoticeHandler(INoticeRepository noticeRepository) : INotificationHandler<DomainEventNotification<ProjectCreated>>
     {

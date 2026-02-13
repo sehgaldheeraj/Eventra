@@ -1,5 +1,5 @@
 ﻿using Application.Common.Exceptions;
-using Domain.Entities;
+using Domain.Entities.Issues;
 using Domain.Interfaces;
 using MediatR;
 using System;

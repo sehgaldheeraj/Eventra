@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Notices.EventHandlers
+namespace Application.Notices.EventHandlers.Project
 {
     public class ProjectOwnerChangedNoticeHandler(INoticeRepository noticeRepository) : INotificationHandler<DomainEventNotification<ProjectOwnerChanged>>
     {

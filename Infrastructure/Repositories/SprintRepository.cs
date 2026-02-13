@@ -1,7 +1,8 @@
 ﻿using Application.Common.Interfaces;
 using Application.Issues.ReadDtos;
 using Application.Sprints.ReadDtos;
-using Domain.Entities;
+using Domain.Entities.Issues;
+using Domain.Entities.Sprints;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

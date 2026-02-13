@@ -1,5 +1,5 @@
 ﻿using Application.Issues.ReadDtos;
-using Domain.Entities;
+using Domain.Entities.Sprints;
 using System;
 using System.Collections.Generic;
 using System.Linq;

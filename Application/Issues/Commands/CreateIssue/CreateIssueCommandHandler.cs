@@ -1,6 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using Domain.Factories;
+using Domain.Entities.Issues;
 using Domain.Interfaces;
 using MediatR;
 using System;
@@ -15,19 +14,34 @@ namespace Application.Issues.Commands.CreateIssue
     {
         private readonly IIssueRepository _issueRepository = issueRepository;
 
-        public async Task<Guid> Handle(CreateIssueCommand command, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateIssueCommand command, CancellationToken ct)
         {
-            var issue = IssueFactory.Create(
-                command.Title,
-                command.Description,
-                command.AssignerId, 
-                command.ProjectId,
-                command.ParentIssueId, 
-                command.SprintId, 
-                command.AssigneeId
+            // 1. Core creation (single source of truth)
+            var issue = Issue.Create(
+                title: command.Title,
+                description: command.Description,
+                projectId: command.ProjectId,
+                assignerId: command.AssignerId
             );
 
-            await _issueRepository.CreateIssueAsync(issue, cancellationToken);
+            // 2. Optional composition (still domain methods)
+            if (command.ParentIssueId.HasValue)
+            {
+                issue.MakeSubIssue(command.ParentIssueId.Value);
+            }
+
+            if (command.SprintId.HasValue)
+            {
+                issue.AssignToSprint(command.SprintId.Value);
+            }
+
+            if (command.AssigneeId.HasValue)
+            {
+                issue.AssignAssignee(command.AssigneeId.Value);
+            }
+
+            // 3. Persist (events dispatched later by DbContext)
+            await _issueRepository.CreateIssueAsync(issue, ct);
 
             return issue.Id;
 

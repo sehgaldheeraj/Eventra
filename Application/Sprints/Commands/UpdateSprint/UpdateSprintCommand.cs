@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Domain.Entities;
+using Domain.Entities.Sprints;
 namespace Application.Sprints.Commands.UpdateSprint
 {
     public class UpdateSprintCommand(Guid id, string? title, string? goal, DateTime? startDate, DateTime? endDate, Guid? projectId, SprintStatus? status) : IRequest<Guid>

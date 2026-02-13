@@ -2,7 +2,7 @@
 using Application.Common.ResponseDtos;
 using Application.Issues.Queries.GetIssues;
 using Application.Users.Queries.GetUserById;
-using Domain.Entities;
+using Domain.Entities.Issues;
 using Domain.Interfaces;
 using MediatR;
 using System;

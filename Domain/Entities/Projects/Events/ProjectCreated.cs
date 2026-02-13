@@ -7,11 +7,5 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities.Projects.Events
 {
-    public class ProjectCreated(Guid projectId, string projectName, Guid createdByUserId) : IDomainEvent
-    {
-        public Guid ProjectId { get; set; } = projectId;
-        public string ProjectName { get; set; } = projectName;
-        public Guid CreatedByUserId { get; set; } = createdByUserId;
-        public DateTime OccuredAt { get; set; } = DateTime.UtcNow;
-    }
+    public sealed record ProjectCreated(Guid ProjectId, string ProjectName, Guid CreatedByUserId): DomainEvent;
 }

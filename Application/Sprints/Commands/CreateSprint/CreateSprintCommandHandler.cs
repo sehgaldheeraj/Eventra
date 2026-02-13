@@ -2,6 +2,7 @@
 using Application.Common.Interfaces.QueryRepositories;
 using Application.Projects.ReadDtos;
 using Domain.Entities;
+using Domain.Entities.Sprints;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,6 @@ namespace Application.Sprints.Commands.CreateSprint
             {
                 throw new NotFoundException("Project", request.ProjectId);
             }
-
             var sprint = new Sprint(request.Title, request.Goal ?? string.Empty, request.StartDate, request.EndDate, request.ProjectId);
             await _sprintRepository.AddSprintAsync(sprint, cancellationToken);
             return sprint.Id;

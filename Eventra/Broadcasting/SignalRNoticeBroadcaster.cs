@@ -14,9 +14,9 @@ namespace Eventra.Broadcasting
             _hub = hub;
         }
 
-        public async Task BroadcastAsync(Notice notice, CancellationToken ct = default)
+        public async Task BroadcastAsync(Notice notice, Guid userId, CancellationToken ct = default)
         {
-            await _hub.Clients.User(notice.SenderId.ToString())
+            await _hub.Clients.User(userId.ToString())
                 .SendAsync(
                     notice.Type.ToString(), 
                     notice,

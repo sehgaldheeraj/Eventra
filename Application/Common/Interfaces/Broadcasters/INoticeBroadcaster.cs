@@ -11,6 +11,7 @@ namespace Application.Common.Interfaces.Broadcasters
     {
         Task BroadcastAsync(
             Notice notice,
+            Guid UserId,
             CancellationToken ct = default
         );
     }

@@ -1,4 +1,7 @@
-﻿using Domain.Entities.Projects;
+﻿using Domain.Common;
+using Domain.Entities.Issues;
+using Domain.Entities.Projects;
+using Domain.Entities.Sprints.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Domain.Entities.Sprints
 {
-    public class Sprint
+    public class Sprint : SoftDeletableEntity
     {
         // ---- Identity ----
         public Guid Id { get; private set; }
@@ -131,7 +134,28 @@ namespace Domain.Entities
             ActivatedAt = null;
             Status = SprintStatus.Planned;
         }
+        public void ReconcileStatus(DateTime now)
+        {
+            if (Status == SprintStatus.Planned && StartDate <= now)
+            {
+                Start();
+                AddDomainEvent(new SprintStarted(
+                    ProjectId: ProjectId,
+                    SprintId: Id,
+                    ActivatedAt: ActivatedAt!.Value
+                ));
+            }
 
+            if (Status == SprintStatus.Active && EndDate < now)
+            {
+                Complete();
+                AddDomainEvent(new SprintCompleted(
+                    ProjectId: ProjectId,
+                    SprintId: Id,
+                    CompletedAt: CompletedAt!.Value
+                    ));
+            }
+        }
     }
     public enum SprintStatus
     {

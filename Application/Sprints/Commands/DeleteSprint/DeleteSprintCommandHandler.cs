@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Domain.Interfaces;
 using Application.Common.Exceptions;
-using Domain.Entities;
+using Domain.Entities.Sprints;
 namespace Application.Sprints.Commands.DeleteSprint
 {
     public class DeleteSprintCommandHandler(ISprintRepository sprintRepository) : IRequestHandler<DeleteSprintCommand, string>

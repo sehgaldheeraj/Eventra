@@ -1,7 +1,9 @@
 ﻿using Application.Common.Interfaces.Dispatchers;
 using Domain.Common;
 using Domain.Entities;
+using Domain.Entities.Issues;
 using Domain.Entities.Projects;
+using Domain.Entities.Sprints;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence

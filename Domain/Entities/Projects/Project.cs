@@ -1,5 +1,7 @@
 ﻿using Domain.Common;
+using Domain.Entities.Issues;
 using Domain.Entities.Projects.Events;
+using Domain.Entities.Sprints;
 
 namespace Domain.Entities.Projects
 {
@@ -79,9 +81,9 @@ namespace Domain.Entities.Projects
 
             AddDomainEvent(
                 new ProjectArchived(
-                    projectId: Id,
-                    projectName: Name,
-                    deletedByUserId: deletedByUserId
+                    Id,
+                    Name,
+                    deletedByUserId
                 )
             );
         }
