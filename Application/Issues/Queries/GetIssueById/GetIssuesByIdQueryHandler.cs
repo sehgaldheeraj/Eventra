@@ -26,7 +26,7 @@ namespace Application.Issues.Queries.GetIssueById
                 Title = issue.Title,
                 Description = issue.Description,
                 Status = issue.Status.ToString(),
-                AssignerId = issue.AssignerId,
+                AssignerId = issue.CreatedById,
                 AssigneeId = issue.AssigneeId,
                 ProjectId = issue.ProjectId,
                 SprintId = issue.SprintId,

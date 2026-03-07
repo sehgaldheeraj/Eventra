@@ -21,24 +21,11 @@ namespace Application.Issues.Commands.CreateIssue
                 title: command.Title,
                 description: command.Description,
                 projectId: command.ProjectId,
-                assignerId: command.AssignerId
+                createdById: command.CreatedById,
+                parentIssueId: command.ParentIssueId,
+                sprintId: command.SprintId,
+                assigneeId: command.AssigneeId
             );
-
-            // 2. Optional composition (still domain methods)
-            if (command.ParentIssueId.HasValue)
-            {
-                issue.MakeSubIssue(command.ParentIssueId.Value);
-            }
-
-            if (command.SprintId.HasValue)
-            {
-                issue.AssignToSprint(command.SprintId.Value);
-            }
-
-            if (command.AssigneeId.HasValue)
-            {
-                issue.AssignAssignee(command.AssigneeId.Value);
-            }
 
             // 3. Persist (events dispatched later by DbContext)
             await _issueRepository.CreateIssueAsync(issue, ct);

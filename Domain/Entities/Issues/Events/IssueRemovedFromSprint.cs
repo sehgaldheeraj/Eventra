@@ -10,5 +10,6 @@ namespace Domain.Entities.Issues.Events
     public sealed record IssueRemovedFromSprint(
         Guid IssueId,
         Guid ProjectId,
-        Guid SprintId) : DomainEvent;
+        Guid SprintId,
+        Guid ActorId) : DomainEvent(ActorId);
 }

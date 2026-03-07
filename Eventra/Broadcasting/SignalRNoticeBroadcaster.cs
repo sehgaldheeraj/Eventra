@@ -5,14 +5,9 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Eventra.Broadcasting
 {
-    public class SignalRNoticeBroadcaster : INoticeBroadcaster
+    public class SignalRNoticeBroadcaster(IHubContext<EventraHub> hub) : INoticeBroadcaster
     {
-        private readonly IHubContext<EventraHub> _hub;
-
-        public SignalRNoticeBroadcaster(IHubContext<EventraHub> hub)
-        {
-            _hub = hub;
-        }
+        private readonly IHubContext<EventraHub> _hub = hub;
 
         public async Task BroadcastAsync(Notice notice, Guid userId, CancellationToken ct = default)
         {

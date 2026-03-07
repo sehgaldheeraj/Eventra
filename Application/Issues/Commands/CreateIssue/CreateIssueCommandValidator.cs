@@ -19,8 +19,8 @@ namespace Application.Issues.Commands.CreateIssue
             RuleFor(x => x.Description)
                 .MaximumLength(500).WithMessage("Description should be less than 500 characters");
 
-            RuleFor(x => x.AssignerId)
-                .MustExist(userRepo.UserExistsAsync, "Assigner");
+            RuleFor(x => x.CreatedById)
+                .MustExist(userRepo.UserExistsAsync, "Creator");
 
             RuleFor(x => x.AssigneeId)
                 .MustExistIfProvided(userRepo.UserExistsAsync, "Assignee");

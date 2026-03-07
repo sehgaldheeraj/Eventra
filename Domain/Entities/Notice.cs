@@ -85,7 +85,8 @@ namespace Domain.Entities
         StatusChange,   // Open → InProgress → Done
         Progress,       // SLA / lag / ETA
         Decision,       // Accept / Reject / Approve
-        SystemEvent     // CI/CD, automation
+        SystemEvent,    // CI/CD, automation
+        StructuralLifecycle
     }
     public enum NoticeSeverity
     {
@@ -107,8 +108,12 @@ namespace Domain.Entities
         IssueCreated,
         IssueAssigned,
         IssueStatusChanged,
-
-        CommentAdded,
+        IssueMovedToInProgress,
+        IssueClosed,
+        IssueReopened,
+        IssueAddedToSprint,
+        IssueRemovedFromSprint,
+        IssueUnassigned,
 
         System // fallback
     }

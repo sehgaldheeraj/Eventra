@@ -14,7 +14,7 @@ namespace Application.Issues.Commands.CreateIssue
         public Guid ProjectId { get; set; }
         public Guid? ParentIssueId { get; set; }
         public Guid? SprintId { get; set; }
-        public Guid AssignerId { get; set; }
+        public Guid CreatedById { get; set; }
         public Guid? AssigneeId { get; set; }
 
     }

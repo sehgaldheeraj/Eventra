@@ -20,7 +20,7 @@ namespace Domain.Entities.Issues
         public Guid? ParentIssueId { get; private set; }
         public Guid? SprintId { get; private set; }
         public Guid ProjectId { get; private set; }
-        public Guid AssignerId { get; private set; }
+        public Guid CreatedById { get; private set; }
         public Guid? AssigneeId { get; private set; }
 
         // ---- Navigation (query-only) ----
@@ -29,7 +29,7 @@ namespace Domain.Entities.Issues
 
         public Sprint? Sprint { get; private set; }
         public Project? Project { get; private set; }
-        public User? Assigner { get; private set; }
+        public User? Creator { get; private set; }
         public User? Assignee { get; private set; }
 
         // ---- State ----
@@ -46,7 +46,7 @@ namespace Domain.Entities.Issues
             string title,
             string description,
             Guid projectId,
-            Guid assignerId,
+            Guid createdById,
             Guid? parentIssueId = null,
             Guid? sprintId = null,
             Guid? assigneeId = null)
@@ -60,7 +60,7 @@ namespace Domain.Entities.Issues
                 Title = title,
                 Description = description ?? string.Empty,
                 ProjectId = projectId,
-                AssignerId = assignerId,
+                CreatedById = createdById,
                 ParentIssueId = parentIssueId,
                 SprintId = sprintId,
                 AssigneeId = assigneeId,
@@ -73,7 +73,7 @@ namespace Domain.Entities.Issues
             issue.AddDomainEvent(new IssueCreated(
                 issue.Id,
                 issue.ProjectId,
-                issue.AssignerId,
+                issue.CreatedById,
                 issue.Title,
                 issue.ParentIssueId,
                 issue.CreatedAt));
@@ -96,7 +96,7 @@ namespace Domain.Entities.Issues
         // =========================
         // ASSIGNMENT
         // =========================
-        public void AssignAssignee(Guid assigneeId)
+        public void AssignAssignee(Guid assigneeId, Guid assignerId)
         {
             if (AssigneeId == assigneeId)
                 return;
@@ -106,10 +106,11 @@ namespace Domain.Entities.Issues
             AddDomainEvent(new IssueAssigned(
                 Id,
                 assigneeId,
+                assignerId,
                 ProjectId));
         }
 
-        public void UnassignAssignee()
+        public void UnassignAssignee(Guid unassignedById)
         {
             if (AssigneeId == null)
                 return;
@@ -118,13 +119,14 @@ namespace Domain.Entities.Issues
 
             AddDomainEvent(new IssueUnassigned(
                 Id,
-                ProjectId));
+                ProjectId,
+                unassignedById));
         }
 
         // =========================
         // SPRINT
         // =========================
-        public void AssignToSprint(Guid sprintId)
+        public void AssignToSprint(Guid sprintId, Guid addedById)
         {
             if (SprintId == sprintId)
                 return;
@@ -137,10 +139,11 @@ namespace Domain.Entities.Issues
             AddDomainEvent(new IssueAddedToSprint(
                 Id,
                 sprintId,
-                ProjectId));
+                ProjectId,
+                addedById));
         }
 
-        public void UnassignFromSprint()
+        public void UnassignFromSprint(Guid removedById)
         {
             if (SprintId == null)
                 return;
@@ -153,13 +156,14 @@ namespace Domain.Entities.Issues
             AddDomainEvent(new IssueRemovedFromSprint(
                 Id,
                 previousSprint,
-                ProjectId));
+                ProjectId,
+                removedById));
         }
 
         // =========================
         // STATUS
         // =========================
-        public void MoveToInProgress()
+        public void MoveToInProgress(Guid movedById)
         {
             if (AssigneeId == null)
                 throw new InvalidOperationException(
@@ -170,14 +174,17 @@ namespace Domain.Entities.Issues
                     "Closed issues cannot be moved.");
 
             Status = IssueStatus.InProgress;
+
             var movedAt = DateTime.UtcNow;
+
             AddDomainEvent(new IssueMovedToInProgress(
                 Id,
                 ProjectId,
+                movedById,
                 movedAt));
         }
 
-        public void Close()
+        public void Close(Guid closedById)
         {
             if (Status == IssueStatus.Closed)
                 return;
@@ -188,10 +195,11 @@ namespace Domain.Entities.Issues
             AddDomainEvent(new IssueClosed(
                 Id,
                 ProjectId,
+                closedById,
                 closedAt));
         }
 
-        public void Reopen()
+        public void Reopen(Guid reopenedById)
         {
             if (Status != IssueStatus.Closed)
                 throw new InvalidOperationException(
@@ -205,7 +213,8 @@ namespace Domain.Entities.Issues
 
             AddDomainEvent(new IssueReopened(
                 Id,
-                ProjectId));
+                ProjectId,
+                reopenedById));
         }
     }
 

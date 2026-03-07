@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Contexts;
 using Domain.Entities.Issues;
 using Domain.Interfaces;
 using MediatR;
@@ -10,15 +11,16 @@ using System.Threading.Tasks;
 
 namespace Application.IssueActions.Commands.CloseIssue
 {
-    public class CloseIssueCommandHandler(IIssueRepository issueRepository) : IRequestHandler<CloseIssueCommand, Unit>
+    public class CloseIssueCommandHandler(IIssueRepository issueRepository, IUserContext userContext) : IRequestHandler<CloseIssueCommand, Unit>
     {
         private readonly IIssueRepository _issueRepository = issueRepository;
+        private readonly IUserContext _userContext = userContext;
 
         public async Task<Unit> Handle(CloseIssueCommand command, CancellationToken ct)
         {
             var issue = await _issueRepository.GetIssueByIdAsync(command.IssueId, ct) ?? throw new NotFoundException(nameof(Issue), command.IssueId);
 
-            issue.Close();
+            issue.Close(_userContext.UserId);
             await _issueRepository.UpdateIssueAsync(issue, ct);
             return Unit.Value;
         }

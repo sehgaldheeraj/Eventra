@@ -8,5 +8,6 @@ namespace Domain.Common
     public interface IDomainEvent 
     {
         DateTime OccurredAt { get;}
+        Guid ActorId { get;}
     }
 }

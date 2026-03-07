@@ -10,5 +10,6 @@ namespace Domain.Entities.Issues.Events
     public sealed record IssueClosed(
         Guid IssueId,
         Guid ProjectId,
-        DateTime ClosedAt) : DomainEvent;
+        Guid ActorId,
+        DateTime ClosedAt) : DomainEvent(ActorId);
 }

@@ -10,5 +10,6 @@ namespace Domain.Entities.Issues.Events
     public sealed record IssueMovedToInProgress(
         Guid IssueId,
         Guid ProjectId,
-        DateTime MovedAt) : DomainEvent;
+        Guid ActorId,
+        DateTime MovedAt) : DomainEvent(ActorId);
 }

@@ -10,9 +10,9 @@ namespace Domain.Entities.Issues.Events
     public sealed record IssueCreated(
         Guid IssueId,
         Guid ProjectId,
-        Guid AssignerId,
+        Guid ActorId,
         string Title,
         Guid? ParentIssueId,
         DateTime CreatedAt
-    ) : DomainEvent;
+    ) : DomainEvent(ActorId);
 }

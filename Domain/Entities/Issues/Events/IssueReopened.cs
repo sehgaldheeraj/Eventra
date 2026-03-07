@@ -9,5 +9,6 @@ namespace Domain.Entities.Issues.Events
 {
     public sealed record IssueReopened(
         Guid IssueId,
-        Guid ProjectId) : DomainEvent;
+        Guid ProjectId,
+        Guid ActorId) : DomainEvent(ActorId);
 }
